@@ -3,12 +3,13 @@ import tcod as libtcod
 
 
 class Fighter:
-    def __init__(self, hp, defense, power, xp=0):
+    def __init__(self, hp, defense, power, xp=0, stats={}):
         self.base_max_hp = hp
         self.hp = hp
         self.base_defense = defense
         self.base_power = power
         self.xp = xp
+        self.stats = stats
 
     @property
     def max_hp(self):

@@ -74,8 +74,13 @@ def get_constants():
 
     return constants
 
-def get_game_variables(constants):
-    fighter_component = Fighter(hp=100, defense=1, power=2)
+def get_game_variables(constants, race = None):
+    if race:
+        fighter_component = Fighter(hp=race.value.get('stats').get('max_health'),
+                                    defense=race.value.get('stats').get('str'),
+                                    power=race.value.get('stats').get('str'))
+    else:
+        fighter_component = Fighter(hp=100, defense=1, power=2)
     inventory_component = Inventory(26)
     level_component = Level()
     equipment_component = Equipment()
