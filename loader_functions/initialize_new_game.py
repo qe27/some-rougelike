@@ -9,7 +9,7 @@ from entity import Entity
 from equipment_slots import EquipmentSlots
 from game_messages import MessageLog
 from game_states import GameStates
-from map_objects.game_map import GameMap
+from map_objects.game_map import FloorMap
 from render_functions import RenderOrder
 
 
@@ -89,7 +89,7 @@ def get_game_variables(constants):
     player.inventory.add_item(dagger)
     player.equipment.toggle_equip(dagger)
 
-    game_map = GameMap(constants['map_width'], constants['map_height'])
+    game_map = FloorMap(constants['map_width'], constants['map_height'])
     game_map.make_map(constants['max_rooms'], constants['room_min_size'], constants['room_max_size'],
                       constants['map_width'], constants['map_height'], player, entities)
 

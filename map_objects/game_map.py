@@ -16,12 +16,15 @@ from random_utils import random_choice_from_dict, from_dungeon_level
 from render_functions import RenderOrder
 
 
-class GameMap:
-    def __init__(self, width, height, dungeon_level=1):
+class FloorMap:
+    def __init__(self, width, height, dungeon_level=1, prev_floor=None, next_floor=None):
         self.width = width
         self.height = height
         self.tiles = self.initialize_tiles()
         self.dungeon_level = dungeon_level
+        self.prev_floor = prev_floor
+        self.next_floor = next_floor
+        self.entities = None
 
     def initialize_tiles(self):
         tiles = [[Tile(True) for y in range(self.height)] for x in range(self.width)]
@@ -45,6 +48,12 @@ class GameMap:
 
             # "Rect" class makes rectangles easier to work with
             new_room = Rect(x, y, w, h)
+
+            if r == 0 and self.dungeon_level != 1:
+                up_stairs_component = Stairs(self.dungeon_level - 1)
+                up_stairs = Entity(x + int(round(w / 2)), y + int(round(h / 2)), '<', libtcod.white, 'Stairs',
+                                   render_order=RenderOrder.STAIRS, stairs=up_stairs_component)
+                entities.append(up_stairs)
 
             # run through the other rooms and see if they intersect with this one
             for other_room in rooms:
@@ -90,9 +99,9 @@ class GameMap:
                 rooms.append(new_room)
                 num_rooms += 1
 
-        stairs_component = Stairs(self.dungeon_level + 1)
+        down_stairs_component = Stairs(self.dungeon_level + 1)
         down_stairs = Entity(center_of_last_room_x, center_of_last_room_y, '>', libtcod.white, 'Stairs',
-                             render_order=RenderOrder.STAIRS, stairs=stairs_component)
+                             render_order=RenderOrder.STAIRS, stairs=down_stairs_component)
         entities.append(down_stairs)
 
     def create_room(self, room):
@@ -111,6 +120,16 @@ class GameMap:
         for y in range(min(y1, y2), max(y1, y2) + 1):
             self.tiles[x][y].blocked = False
             self.tiles[x][y].block_sight = False
+
+    def get_next_floor_stairs(self):
+        for entity in self.entities:
+            if entity.stairs and entity.stairs.floor == self.dungeon_level + 1:
+                return entity
+
+    def get_prev_floor_stairs(self):
+        for entity in self.entities:
+            if entity.stairs and entity.stairs.floor == self.dungeon_level -1:
+                return entity
 
     def place_entities(self, room, entities):
         max_monsters_per_room = from_dungeon_level([[2, 1], [3, 4], [5, 6]], self.dungeon_level)
@@ -195,16 +214,21 @@ class GameMap:
 
         return False
 
-    def next_floor(self, player, message_log, constants):
-        self.dungeon_level += 1
-        entities = [player]
 
-        self.tiles = self.initialize_tiles()
-        self.make_map(constants['max_rooms'], constants['room_min_size'], constants['room_max_size'],
-                      constants['map_width'], constants['map_height'], player, entities)
+def next_floor(current_entities, current_floor_map, player, message_log, constants, prev_floor=None, prev_entities=None):
+    new_floor = FloorMap(current_floor_map.width, current_floor_map.height, current_floor_map.dungeon_level + 1,
+                         prev_floor=current_floor_map, next_floor=None)
+    current_floor_map.next_floor = new_floor
+    current_floor_map.entities = current_entities
+    entities = [player]
+    new_floor.entities = entities
 
-        player.fighter.heal(player.fighter.max_hp // 2)
+    new_floor.tiles = new_floor.initialize_tiles()
+    new_floor.make_map(constants['max_rooms'], constants['room_min_size'], constants['room_max_size'],
+                       constants['map_width'], constants['map_height'], player, entities)
 
-        message_log.add_message(Message('You take a moment to rest, and recover your strength.', libtcod.light_violet))
+    player.fighter.heal(player.fighter.max_hp // 2)
 
-        return entities
+    message_log.add_message(Message('You take a moment to rest, and recover your strength.', libtcod.light_violet))
+
+    return new_floor, entities

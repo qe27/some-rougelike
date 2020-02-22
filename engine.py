@@ -1,5 +1,6 @@
 import tcod as libtcod
 
+from components.fighter import Fighter
 from death_functions import kill_player, kill_monster
 from entity import get_blocking_entities_at_location
 from fov_functions import initialize_fov, recompute_fov
@@ -8,6 +9,7 @@ from game_states import GameStates
 from input_handlers import handle_keys, handle_mouse, handle_main_menu
 from loader_functions.data_loaders import save_game, load_game
 from loader_functions.initialize_new_game import get_constants, get_game_variables
+from map_objects.game_map import next_floor
 from menus import message_box, main_menu
 from render_functions import render_all, clear_all, clear_map
 
@@ -53,13 +55,19 @@ def main():
             new_game = action.get('new_game')
             load_saved_game = action.get('load_game')
             exit_game = action.get('exit')
+            debug = action.get('debug')
 
             if show_load_error_message and (new_game or load_saved_game or exit_game):
                 show_load_error_message = False
             elif new_game:
                 player, entities, game_map, message_log, game_state = get_game_variables(constants)
                 game_state = GameStates.PLAYERS_TURN
-
+                show_main_menu = False
+            elif debug:
+                player, entities, game_map, message_log, game_state = get_game_variables(constants)
+                player.fighter = Fighter(hp=999, defense=999, power=999)
+                player.fighter.owner = player
+                game_state = GameStates.PLAYERS_TURN
                 show_main_menu = False
             elif load_saved_game:
                 try:
@@ -177,11 +185,25 @@ def play_game(player, entities, game_map, message_log, game_state, con, panel, c
             for entity in entities:
                 if entity.stairs and entity.x == player.x and entity.y == player.y:
                     clear_map(con, game_map, constants['colors'])
-                    entities = game_map.next_floor(player, message_log, constants)
+                    if (entity.stairs.floor > game_map.dungeon_level):
+                        # next floor
+                        if (game_map.next_floor):
+                            # next floor was already initialized - move player on prev floor stairs
+                            game_map, entities = game_map.next_floor, game_map.next_floor.entities
+                            player.x, player.y = game_map.get_prev_floor_stairs().x, game_map.get_prev_floor_stairs().y
+                        else:
+                            # next floor wasn't initialized, create new one
+                            game_map, entities = next_floor(entities, game_map, player, message_log, constants,
+                                                                     prev_floor=game_map.tiles, prev_entities=entities)
+                    else:
+                        # previous floor was initialized - move playey on next floor stairs
+                        if (game_map.prev_floor):
+                            game_map, entities = game_map.prev_floor, game_map.prev_floor.entities
+                            player.x, player.y = game_map.get_next_floor_stairs().x, game_map.get_next_floor_stairs().y
+
                     fov_map = initialize_fov(game_map)
                     fov_recompute = True
                     libtcod.console_clear(con)
-
                     break
             else:
                 message_log.add_message(Message('There are no stairs here.', libtcod.yellow))

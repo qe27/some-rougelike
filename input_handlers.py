@@ -128,6 +128,8 @@ def handle_main_menu(key):
         return {'load_game': True}
     elif key_char == 'c' or  key.vk == libtcod.KEY_ESCAPE:
         return {'exit': True}
+    elif key_char == 'd':
+        return {'debug': True}
 
     return {}
 
