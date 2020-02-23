@@ -6,11 +6,11 @@ from entity import get_blocking_entities_at_location
 from fov_functions import initialize_fov, recompute_fov
 from game_messages import Message
 from game_states import GameStates
-from input_handlers import handle_keys, handle_mouse, handle_main_menu
+from input_handlers import handle_keys, handle_mouse, handle_main_menu, handle_race_selection_menu
 from loader_functions.data_loaders import save_game, load_game
 from loader_functions.initialize_new_game import get_constants, get_game_variables
 from map_objects.game_map import next_floor
-from menus import message_box, main_menu
+from menus import message_box, main_menu, race_selection_menu
 from render_functions import render_all, clear_all, clear_map
 
 
@@ -60,9 +60,16 @@ def main():
             if show_load_error_message and (new_game or load_saved_game or exit_game):
                 show_load_error_message = False
             elif new_game:
-                player, entities, game_map, message_log, game_state = get_game_variables(constants)
-                game_state = GameStates.PLAYERS_TURN
-                show_main_menu = False
+                race_selection_menu(con, main_menu_background_image, constants['screen_width'],
+                                    constants['screen_height'])
+                while show_main_menu:
+                    libtcod.sys_check_for_event(libtcod.EVENT_KEY_PRESS | libtcod.EVENT_MOUSE, key, mouse)
+                    race = handle_race_selection_menu(key).get('race')
+                    if race:
+                        player, entities, game_map, message_log, game_state = get_game_variables(constants, race=race)
+                        game_state = GameStates.PLAYERS_TURN
+                        show_main_menu = False
+
             elif debug:
                 player, entities, game_map, message_log, game_state = get_game_variables(constants)
                 player.fighter = Fighter(hp=999, defense=999, power=999)

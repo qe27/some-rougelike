@@ -1,6 +1,7 @@
 import tcod as libtcod
 
 from game_states import GameStates
+from loader_functions.race_stats.race_stats import Races
 
 
 def handle_keys(key, game_state):
@@ -130,6 +131,17 @@ def handle_main_menu(key):
         return {'exit': True}
     elif key_char == 'd':
         return {'debug': True}
+
+    return {}
+
+
+def handle_race_selection_menu(key):
+    key_char = chr(key.c)
+
+    if key_char == 'a':
+        return {'race': Races.HUMAN}
+    elif key_char == 'b':
+        return {'race': Races.MAGIC_ELEMENTAL}
 
     return {}
 
