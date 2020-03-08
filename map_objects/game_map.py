@@ -2,6 +2,8 @@ import tcod as libtcod
 
 from map_objects.tile import Tile
 from objects.game_objects.game_object import GameObject
+from objects.game_objects.interactable_object import InteractableObject
+from objects.game_objects.worker import Worker
 
 
 class FloorMap:
@@ -22,8 +24,8 @@ class FloorMap:
                 if (10 < x < 20) and (10 < y < 20):
                     self.tiles[x][y].exists = True
 
-        self.tiles[15][15].objects.append(GameObject("@", libtcod.white, "player", tile=self.tiles[15][15]))
-        self.tiles[17][17].objects.append(GameObject("F", libtcod.red, "fire", tile=self.tiles[17][17]))
+        self.tiles[15][15].objects.append(Worker(libtcod.white, "player", tile=self.tiles[15][15]))
+        self.tiles[17][17].objects.append(InteractableObject(libtcod.blue, "Cabinet", "C", tile=self.tiles[17][17]))
         self.tiles[18][17].objects.append(GameObject("F", libtcod.red, "fire", tile=self.tiles[18][17]))
         self.tiles[19][17].objects.append(GameObject("F", libtcod.red, "fire", tile=self.tiles[19][17]))
         self.tiles[11][11].objects.append(GameObject("F", libtcod.red, "fire", tile=self.tiles[11][11]))
