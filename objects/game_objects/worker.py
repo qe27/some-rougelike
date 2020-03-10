@@ -18,11 +18,17 @@ class Worker(GameObject):
             self.currentAction = self.actionChain[0]
             self.chainCoeff = 0
 
-        result = self.currentAction.doAction({"key": "value"})
-        if result['completed']:
-            if self.chainCoeff >= len(self.actionChain) - 1:
-                self.chainCoeff = 0
-            else:
-                self.chainCoeff = self.chainCoeff + 1
 
-            self.currentAction = self.actionChain[self.chainCoeff]
+        if self.tile.isNear(self.currentAction.interactableObject.tile):
+            result = self.currentAction.doAction({"key": "value"})
+            if result['completed']:
+                if self.chainCoeff >= len(self.actionChain) - 1:
+                    self.chainCoeff = 0
+                else:
+                    self.chainCoeff = self.chainCoeff + 1
+
+                self.currentAction = self.actionChain[self.chainCoeff]
+        else:
+            # move to tile
+            return "aa"
+

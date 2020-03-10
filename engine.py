@@ -2,6 +2,7 @@ import tcod as libtcod
 
 from map_objects.game_map import FloorMap
 from render_functions import render_all, clear_all
+from scripts import map_scripts
 
 
 def main():
@@ -23,6 +24,8 @@ def main():
 
     floor_map = FloorMap(map_width, map_height)
     floor_map.make_map()
+
+    map_scripts.calculatePath(floor_map.tiles[7][11], floor_map.tiles[15][15], floor_map)
 
     while not libtcod.console_is_window_closed():
         render_all(con, floor_map, screen_width, screen_height, colors)
