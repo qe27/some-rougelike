@@ -1,16 +1,22 @@
+import numpy as np
 from pathfinding.core.diagonal_movement import DiagonalMovement
 from pathfinding.core.grid import Grid
 from pathfinding.finder.a_star import AStarFinder
 
 
 def calculatePath(tile1, tile2, map):
-    matrix = [[0 for x in range(map.height)] for y in range(map.width)]
+    matrix = [[1 for x in range(map.height)] for y in range(map.width)]
     for x in range(map.width):
         for y in range(map.height):
-            if len(map.tiles[x][y].objects) == 0:
-                matrix[x][y] = 1
-            else:
+            # print("hello")
+            if len(map.tiles[x][y].objects) != 0:
                 matrix[x][y] = 0
+            else:
+                matrix[x][y] = 1
+
+    # 0 - obstacle
+    # >0 - weight
+    # start and end shouldn't be 0's
 
     grid = Grid(matrix=matrix)
 
