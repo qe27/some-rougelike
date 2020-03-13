@@ -3,10 +3,11 @@ class Tile:
     A tile on a map. It contains objects.
     """
 
-    def __init__(self, x, y, exists=False, game_object=None):
+    def __init__(self, game_map, x, y, exists=False, game_object=None):
         """
         TODO: support list of objects
         """
+        self.game_map = game_map
         self.x = x
         self.y = y
         self.exists = exists

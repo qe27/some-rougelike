@@ -16,14 +16,16 @@ class ProcessAction:
         self.complexity = complexity
         self.baseUnits = baseUnits
         self.interactableObject = interactableObject
+        self.currentProgress = 0
 
 
-    def process(self, producedUnits):
-        producedUnits = producedUnits + self.baseUnits
-        if producedUnits >= self.complexity:
+    def process(self):
+        self.currentProgress = self.currentProgress + self.baseUnits
+        if self.currentProgress >= self.complexity:
             return {"completed": True, "output": self.outputTypes}
         else:
-            return {"completed": False, "producedUnits": producedUnits}
+            return {"completed": False, "producedUnits": self.currentProgress}
 
-    def doAction(self, input):
-        return self.process(input['producedUnits'])
+    def doAction(self):
+        # return self.process(input['producedUnits'])
+        return self.process()
