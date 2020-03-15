@@ -24,7 +24,7 @@ def calculatePath(tile1, tile2, map):
     finder = AStarFinder(diagonal_movement=DiagonalMovement.always)
     path, runs = finder.find_path(start, end, grid)
 
-    print('operations:', runs, 'path length:', len(path))
-    print(grid.grid_str(path=path, start=start, end=end))
+    # print('operations:', runs, 'path length:', len(path))
+    # print(grid.grid_str(path=path, start=start, end=end))
     # print(grid.grid_str)
     return path
