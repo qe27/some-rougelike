@@ -7,6 +7,7 @@ from objects.game_objects.worker import Worker
 from render_functions import render_all, clear_all
 from scripts.game_states import GameStates
 from scripts.input_handlers import handle_keys
+import operator
 from scripts.wait_thread import WaitThread
 
 
@@ -22,7 +23,9 @@ def main():
 
     colors = {
         'dark_wall': libtcod.Color(0, 0, 100),
-        'dark_ground': libtcod.Color(50, 50, 150)
+        'dark_ground': libtcod.Color(50, 50, 150),
+        'white': libtcod.Color(250, 250, 250),
+        'yellow': libtcod.Color(250, 250, 0)
     }
 
     libtcod.console_set_custom_font('arial10x10.png', libtcod.FONT_TYPE_GREYSCALE | libtcod.FONT_LAYOUT_TCOD)
@@ -34,15 +37,21 @@ def main():
     floor_map = FloorMap(map_width, map_height)
     floor_map.make_map()
 
+    additional_render_params = {}
+
     key = libtcod.Key()
     mouse = libtcod.Mouse()
     key_pressed_while_wait = {}
+
+    selected_tile = (0, 0)
+
+    additional_render_params['selected_tile'] = selected_tile
 
     # map_scripts.calculatePath(floor_map.tiles[10][10], floor_map.tiles[15][15], floor_map)
 
     while not libtcod.console_is_window_closed():
         libtcod.sys_check_for_event(libtcod.EVENT_KEY_PRESS | libtcod.EVENT_MOUSE, key, mouse)
-        render_all(con, floor_map, screen_width, screen_height, colors)
+        render_all(con, floor_map, screen_width, screen_height, colors, additional_render_params, game_state)
         libtcod.console_flush()
 
         # if bool(key_pressed_while_wait):
@@ -102,7 +111,10 @@ def main():
                 #     pass
 
         else:
-            print("game is paused!")
+            if selector_move:
+                selected_tile = tuple(map(operator.add, selected_tile, selector_move))
+                additional_render_params['selected_tile'] = selected_tile
+
 
         clear_all(con, floor_map)
 
