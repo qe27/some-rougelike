@@ -99,25 +99,41 @@ def main():
             print('speed %s' % speed)
             # its essential to read keys 'during' pause because otherwise we would miss inputs
             # TODO: fix problem with key input delay
-            time.sleep(speed_dict[speed])
+            t = 0.005
+            while t < speed_dict[speed]:
+                libtcod.sys_check_for_event(libtcod.EVENT_KEY_PRESS | libtcod.EVENT_MOUSE, key, mouse)
+                key_action = handle_keys(key, game_state)
+                toggle_pause = key_action.get('toggle_pause')
+                change_speed = key_action.get('change_speed')
+                if toggle_pause:
+                    game_state = game_state.PAUSED
+                    break
+                if change_speed:
+                    speed = speed + change_speed
+                    if speed < -3:
+                        speed = -3
+                    if speed > 3:
+                        speed = 3
+                    break
+                time.sleep(0.005)
+                t += 0.005
             # wait_thread = WaitThread(speed_dict[speed])
             # key_pressed_while_wait = {}
             # wait_thread.start()
             # while wait_thread.is_alive():
-                # key_pressed_while_wait = handle_keys(key, GameStates.IN_PROGRESS)
-                # libtcod.sys_check_for_event(libtcod.EVENT_KEY_PRESS | libtcod.EVENT_MOUSE, key, mouse)
-                # key_pressed_while_wait = handle_keys(key, GameStates.IN_PROGRESS)
-                # if key_pressed_while_wait:
-                #     pass
+            # key_pressed_while_wait = handle_keys(key, GameStates.IN_PROGRESS)
+            # libtcod.sys_check_for_event(libtcod.EVENT_KEY_PRESS | libtcod.EVENT_MOUSE, key, mouse)
+            # key_pressed_while_wait = handle_keys(key, GameStates.IN_PROGRESS)
+            # if key_pressed_while_wait:
+            #     pass
 
         else:
             if selector_move:
                 selected_tile = tuple(map(operator.add, selected_tile, selector_move))
                 additional_render_params['selected_tile'] = selected_tile
 
-
         clear_all(con, floor_map)
 
 
 if __name__ == '__main__':
-     main()
+    main()
