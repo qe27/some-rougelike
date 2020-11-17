@@ -5,6 +5,7 @@ import tcod as libtcod
 from map_objects.game_map import FloorMap
 from objects.game_objects.worker import Worker
 from render_functions import render_all, clear_all
+from scripts.engine.game_messages import MessageLog, Message
 from scripts.game_states import GameStates
 from scripts.input_handlers import handle_keys
 import operator
@@ -15,11 +16,19 @@ def main():
     speed_dict = {3: 0.25, 2: 0.33, 1: 0.5, 0: 1, -1: 2, -2: 3, -3: 4}
     screen_width = 80
     screen_height = 50
+    panel_height = 15
     map_width = 80
     map_height = 45
     game_state = GameStates.PAUSED
     paused = False
     speed = 0
+    panel_y = screen_height - panel_height
+
+    bar_width = 20
+    panel_height = 7
+    message_x = bar_width + 2
+    message_width = screen_width - bar_width - 2
+    message_height = panel_height - 1
 
     colors = {
         'dark_wall': libtcod.Color(0, 0, 100),
@@ -33,6 +42,7 @@ def main():
     libtcod.console_init_root(screen_width, screen_height, 'shop game', False)
 
     con = libtcod.console_new(screen_width, screen_height)
+    panel = libtcod.console_new(screen_width, panel_height)
 
     floor_map = FloorMap(map_width, map_height)
     floor_map.make_map()
@@ -48,11 +58,13 @@ def main():
     additional_render_params['selected_tile'] = selected_tile
 
     # map_scripts.calculatePath(floor_map.tiles[10][10], floor_map.tiles[15][15], floor_map)
+    message_log = MessageLog(message_x, message_width, message_height)
 
     while not libtcod.console_is_window_closed():
         libtcod.sys_check_for_event(libtcod.EVENT_KEY_PRESS | libtcod.EVENT_MOUSE, key, mouse)
-        render_all(con, floor_map, screen_width, screen_height, colors, additional_render_params, game_state)
+        render_all(con, panel, panel_y, floor_map, screen_width, screen_height, panel_height, colors, additional_render_params, game_state, message_log)
         libtcod.console_flush()
+        message_log.add_message(Message('speed %s' % speed, libtcod.yellow))
 
         # if bool(key_pressed_while_wait):
         #     key_action = key_pressed_while_wait
@@ -67,9 +79,11 @@ def main():
 
         if toggle_pause:
             if game_state == game_state.PAUSED:
+                message_log.add_message(Message('game resumed', libtcod.yellow))
                 game_state = game_state.IN_PROGRESS
             else:
                 game_state = game_state.PAUSED
+                message_log.add_message(Message('paused', libtcod.yellow))
 
         if change_speed:
             speed = speed + change_speed
@@ -96,7 +110,7 @@ def main():
                 if isinstance(obj, Worker):
                     if action['actionResult'] == 'moving':
                         obj.setTile(floor_map.tiles[action['moveTo'][0]][action['moveTo'][1]])
-            print('speed %s' % speed)
+            # print('speed %s' % speed)
             # its essential to read keys 'during' pause because otherwise we would miss inputs
             # TODO: fix problem with key input delay
             t = 0.005
