@@ -15,20 +15,22 @@ from scripts.wait_thread import WaitThread
 def main():
     speed_dict = {3: 0.25, 2: 0.33, 1: 0.5, 0: 1, -1: 2, -2: 3, -3: 4}
     screen_width = 80
-    screen_height = 50
-    panel_height = 15
+    screen_height = 80
+    m_panel_height = 15
+    a_panel_height = 15
     map_width = 80
     map_height = 45
     game_state = GameStates.PAUSED
     paused = False
     speed = 0
-    panel_y = screen_height - panel_height
+    m_panel_y = screen_height - m_panel_height
+    a_panel_y = screen_height - a_panel_height - m_panel_height
 
     bar_width = 20
-    panel_height = 7
+    # panel_height = 7
     message_x = bar_width + 2
     message_width = screen_width - bar_width - 2
-    message_height = panel_height - 1
+    message_height = m_panel_height - 1
 
     colors = {
         'dark_wall': libtcod.Color(0, 0, 100),
@@ -42,7 +44,9 @@ def main():
     libtcod.console_init_root(screen_width, screen_height, 'shop game', False)
 
     con = libtcod.console_new(screen_width, screen_height)
-    panel = libtcod.console_new(screen_width, panel_height)
+    # panel = libtcod.console_new(screen_width, panel_height)
+    m_panel = libtcod.console_new(screen_width, m_panel_height)
+    a_panel = libtcod.console_new(screen_width, a_panel_height)
 
     floor_map = FloorMap(map_width, map_height)
     floor_map.make_map()
@@ -59,10 +63,12 @@ def main():
 
     # map_scripts.calculatePath(floor_map.tiles[10][10], floor_map.tiles[15][15], floor_map)
     message_log = MessageLog(message_x, message_width, message_height)
+    action_panel_messages = []
 
     while not libtcod.console_is_window_closed():
         libtcod.sys_check_for_event(libtcod.EVENT_KEY_PRESS | libtcod.EVENT_MOUSE, key, mouse)
-        render_all(con, panel, panel_y, floor_map, screen_width, screen_height, panel_height, colors, additional_render_params, game_state, message_log)
+        render_all(con, m_panel, a_panel, m_panel_y, a_panel_y, floor_map, screen_width, screen_height,
+                   m_panel_height, colors, additional_render_params, game_state, message_log, action_panel_messages)
         libtcod.console_flush()
         message_log.add_message(Message('speed %s' % speed, libtcod.yellow))
 
@@ -95,6 +101,7 @@ def main():
         # key_action = {}
 
         if game_state == game_state.IN_PROGRESS:
+            action_panel_messages = ['Press SPACE to pause', 'Press ESC to QUIT', 'Press + to speed up', 'Press - to speed down']
             objects_actions = {}
 
             for x in range(map_width):
@@ -110,9 +117,6 @@ def main():
                 if isinstance(obj, Worker):
                     if action['actionResult'] == 'moving':
                         obj.setTile(floor_map.tiles[action['moveTo'][0]][action['moveTo'][1]])
-            # print('speed %s' % speed)
-            # its essential to read keys 'during' pause because otherwise we would miss inputs
-            # TODO: fix problem with key input delay
             t = 0.005
             while t < speed_dict[speed]:
                 libtcod.sys_check_for_event(libtcod.EVENT_KEY_PRESS | libtcod.EVENT_MOUSE, key, mouse)
@@ -142,6 +146,7 @@ def main():
             #     pass
 
         else:
+            action_panel_messages = ['Press SPACE to continue', 'Navigate selector using arrows', 'Press ESC to QUIT']
             if selector_move:
                 selected_tile = tuple(map(operator.add, selected_tile, selector_move))
                 additional_render_params['selected_tile'] = selected_tile
