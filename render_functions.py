@@ -5,7 +5,7 @@ import tcod as libtcod
 from scripts.game_states import GameStates
 
 
-def render_all(con, game_map, screen_width, screen_height, colors, additional_render_params, game_state):
+def render_all(con, game_map, screen_width, screen_height, colors, additional_render_params, game_state, message_log):
     if game_state == GameStates.IN_PROGRESS or game_state == GameStates.PAUSED:
         # Draw all the tiles in the game map
         for y in range(game_map.height):
@@ -21,6 +21,12 @@ def render_all(con, game_map, screen_width, screen_height, colors, additional_re
                     draw_selector(con, additional_render_params['selected_tile'], colors)
 
     libtcod.console_blit(con, 0, 0, screen_width, screen_height, 0, 0, 0)
+
+    y = 1
+    for message in message_log.messages:
+        libtcod.console_set_default_foreground(panel, message.color)
+        libtcod.console_print_ex(panel, message_log.x, y, libtcod.BKGND_NONE, libtcod.LEFT, message.text)
+        y += 1
 
 
 def draw_selector(con, selector, colors):
