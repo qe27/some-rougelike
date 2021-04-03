@@ -3,7 +3,8 @@ import time
 import tcod as libtcod
 
 from map_objects.game_map import FloorMap
-from objects.game_objects.worker import Worker
+from objects.game_objects.actionmanager import ActionManager
+from objects.game_objects.interactable_object import InteractableObject
 from render_functions import render_all, clear_all
 from scripts.engine.game_messages import MessageLog, Message
 from scripts.game_states import GameStates
@@ -108,13 +109,16 @@ def main():
                 for y in range(map_height):
                     if floor_map.tiles[x][y].objects:
                         for obj in floor_map.tiles[x][y].objects:
-                            if isinstance(obj, Worker):
+                            if isinstance(obj, ActionManager):
                                 action_result = obj.doAction()
                                 # print("action result %s" % action_result)
                                 objects_actions[obj] = action_result
+                            if isinstance(obj, InteractableObject):
+                                obj.doEndTurnAction(floor_map.tiles)
+
 
             for obj, action in objects_actions.items():
-                if isinstance(obj, Worker):
+                if isinstance(obj, ActionManager):
                     if action['actionResult'] == 'moving':
                         obj.setTile(floor_map.tiles[action['moveTo'][0]][action['moveTo'][1]])
             t = 0.005

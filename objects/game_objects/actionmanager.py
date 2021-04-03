@@ -2,13 +2,13 @@ from objects.game_objects.game_object import GameObject
 from scripts import map_scripts
 
 
-class Worker(GameObject):
+class ActionManager:
 
-    def __init__(self, color, name, stats=None, char='@', tile=None):
-        GameObject.__init__(self, char, color, name, blocks=False, tile=tile)
-        if stats is None:
-            stats = []
-        self.stats = stats
+    def __init__(self):
+        # GameObject.__init__(self, char, color, name, blocks=False, tile=tile)
+        # if stats is None:
+        #     stats = []
+        # self.stats = stats
         self.actionChain = []
         self.currentAction = None
         self.chainCoeff = 0
