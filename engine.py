@@ -17,8 +17,9 @@ def main():
     speed_dict = {3: 0.25, 2: 0.33, 1: 0.5, 0: 1, -1: 2, -2: 3, -3: 4}
     screen_width = 80
     screen_height = 80
-    m_panel_height = 15
-    a_panel_height = 15
+    a_panel_height = screen_height // 5
+    m_panel_height = screen_height - a_panel_height
+    panel_width = screen_width // 3
     map_width = 80
     map_height = 45
     game_state = GameStates.PAUSED
@@ -45,9 +46,12 @@ def main():
     libtcod.console_init_root(screen_width, screen_height, 'shop game', False)
 
     con = libtcod.console_new(screen_width, screen_height)
+    m_panel = libtcod.console_new(panel_width, m_panel_height)
+    a_panel = libtcod.console_new(panel_width, a_panel_height)
+    speed_panel = libtcod.console_new(panel_width, 1)
     # panel = libtcod.console_new(screen_width, panel_height)
-    m_panel = libtcod.console_new(screen_width-map_width // 2, m_panel_height)
-    a_panel = libtcod.console_new(screen_width-map_width // 2, screen_height - a_panel_height)
+    # libtcod.console_blit(m_panel, 0, 0, screen_width-map_width // 2, m_panel_height, 0, 0, 0)
+    # libtcod.console_blit(a_panel, 0, 0, screen_width-map_width, m_panel_height, 0, screen_width-map_width, 0)
 
     floor_map = FloorMap(map_width, map_height)
     floor_map.make_map()
@@ -68,8 +72,14 @@ def main():
 
     while not libtcod.console_is_window_closed():
         libtcod.sys_check_for_event(libtcod.EVENT_KEY_PRESS | libtcod.EVENT_MOUSE, key, mouse)
-        render_all(con, m_panel, a_panel, m_panel_y, a_panel_y, floor_map, screen_width, screen_height,
-                   m_panel_height, colors, additional_render_params, game_state, message_log, action_panel_messages)
+        # con, messages_panel, action_panel, action_panel_x, action_panel_y, action_panel_width,
+        # action_panel_height, messages_panel_x, messages_panel_y, messages_panel_width, messages_panel_height,
+        # game_map
+        render_all(con, m_panel, a_panel, screen_width - panel_width, 0, panel_width, a_panel_height,
+                   screen_width - panel_width, a_panel_height, panel_width, m_panel_height,
+                   floor_map, screen_width, screen_height,
+                   m_panel_height, colors, additional_render_params, game_state, message_log, action_panel_messages,
+                   speed_panel, speed)
         libtcod.console_flush()
         message_log.add_message(Message('speed %s' % speed, libtcod.yellow))
 

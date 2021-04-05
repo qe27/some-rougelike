@@ -5,8 +5,10 @@ import tcod as libtcod
 from scripts.game_states import GameStates
 
 
-def render_all(con, messages_panel, action_panel, messages_panel_y, action_panel_y, game_map, screen_width, screen_height, panel_height, colors,
-               additional_render_params, game_state, message_log, action_panel_messages):
+def render_all(con, messages_panel, action_panel, action_panel_x, action_panel_y, action_panel_width,
+               action_panel_height, messages_panel_x, messages_panel_y, messages_panel_width, messages_panel_height,
+               game_map, screen_width, screen_height, panel_height, colors,
+               additional_render_params, game_state, message_log, action_panel_messages, speed_panel, speed):
     if game_state == GameStates.IN_PROGRESS or game_state == GameStates.PAUSED:
         # Draw all the tiles in the game map
         for y in range(game_map.height):
@@ -28,20 +30,29 @@ def render_all(con, messages_panel, action_panel, messages_panel_y, action_panel
     y = 1
     for message in message_log.messages:
         libtcod.console_set_default_foreground(messages_panel, message.color)
-        libtcod.console_print_ex(messages_panel, message_log.x, y, libtcod.BKGND_NONE, libtcod.LEFT, message.text)
+        libtcod.console_print_ex(messages_panel, 0, y, libtcod.BKGND_NONE, libtcod.LEFT, message.text)
         y += 1
 
-    libtcod.console_blit(messages_panel, 0, 0, screen_width, panel_height, 0, 0, messages_panel_y)
+    libtcod.console_blit(messages_panel, 0, 0, messages_panel_width, messages_panel_height, 0, messages_panel_x, messages_panel_y)
 
     action_panel.clear()
 
     y = 1
     for message in action_panel_messages:
         libtcod.console_set_default_foreground(action_panel, libtcod.purple)
-        libtcod.console_print_ex(action_panel, 7, y, libtcod.BKGND_NONE, libtcod.LEFT, message)
+        libtcod.console_print_ex(action_panel, 0, y, libtcod.BKGND_NONE, libtcod.LEFT, message)
         y += 1
 
-    libtcod.console_blit(action_panel, 0, 0, screen_width, panel_height, 0, 0, action_panel_y)
+    libtcod.console_blit(action_panel, 0, 0, action_panel_width, action_panel_height, 0, action_panel_x, action_panel_y)
+
+    speed_panel.clear()
+    libtcod.console_set_default_background(speed_panel, libtcod.black)
+    if game_state == GameStates.PAUSED:
+        display_speed = 'PAUSED'
+    else:
+        display_speed = 'Speed: ' + str(speed)
+    libtcod.console_print_ex(speed_panel, 0, 0, libtcod.BKGND_NONE, libtcod.LEFT, display_speed)
+    libtcod.console_blit(speed_panel, 0, 0, screen_width, 1, 0, 0, screen_height - 1)
 
 
 def draw_selector(con, selector, colors):
