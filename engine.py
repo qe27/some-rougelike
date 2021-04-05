@@ -46,8 +46,8 @@ def main():
 
     con = libtcod.console_new(screen_width, screen_height)
     # panel = libtcod.console_new(screen_width, panel_height)
-    m_panel = libtcod.console_new(screen_width, m_panel_height)
-    a_panel = libtcod.console_new(screen_width, a_panel_height)
+    m_panel = libtcod.console_new(screen_width-map_width // 2, m_panel_height)
+    a_panel = libtcod.console_new(screen_width-map_width // 2, screen_height - a_panel_height)
 
     floor_map = FloorMap(map_width, map_height)
     floor_map.make_map()
