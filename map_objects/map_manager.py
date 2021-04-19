@@ -1,0 +1,2 @@
+class MapManager:
+    map = None

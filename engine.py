@@ -3,8 +3,10 @@ import time
 import tcod as libtcod
 
 from map_objects.game_map import WorldMap
+from map_objects.map_manager import MapManager
 from render_functions import render_all, clear_all
 from scripts.engine.game_messages import MessageLog
+from scripts.engine.handlers.debug_handler import handle_debug
 from scripts.game_states import GameStates
 from scripts.input_handlers import handle_keys
 import operator
@@ -18,7 +20,9 @@ def main():
     panel_width = screen_width // 3
     map_width = 80
     map_height = 45
+    # game_state = GameStates.PAUSED
     game_state = GameStates.PAUSED
+    debug = True
     # m_panel_y = screen_height - m_panel_height
     # a_panel_y = screen_height - a_panel_height - m_panel_height
 
@@ -42,8 +46,8 @@ def main():
     m_panel = libtcod.console_new(panel_width, m_panel_height)
     a_panel = libtcod.console_new(panel_width, a_panel_height)
 
-    floor_map = WorldMap(map_width, map_height)
-    floor_map.make_map()
+    MapManager.map = WorldMap(map_width, map_height)
+    MapManager.map.make_map()
 
     additional_render_params = {}
 
@@ -60,18 +64,28 @@ def main():
         libtcod.sys_check_for_event(libtcod.EVENT_KEY_PRESS | libtcod.EVENT_MOUSE, key, mouse)
         render_all(con, m_panel, a_panel, screen_width - panel_width, 0, panel_width, a_panel_height,
                    screen_width - panel_width, a_panel_height, panel_width, m_panel_height,
-                   floor_map, screen_width, screen_height,
+                   MapManager.map, screen_width, screen_height,
                    m_panel_height, colors, additional_render_params, game_state, message_log, action_panel_messages)
         libtcod.console_flush()
 
         key_action = handle_keys(key, game_state)
         selector_move = key_action.get('selector_move')
+        action = key_action.get('action')
 
         if selector_move:
             selected_tile = tuple(map(operator.add, selected_tile, selector_move))
             additional_render_params['selected_tile'] = selected_tile
 
-        clear_all(con, floor_map)
+        clear_all(con, MapManager.map)
+
+        if debug:
+            # handle_debug()
+            # if action:
+            if MapManager.map.tiles[selected_tile[0]][selected_tile[1]].objects:
+                action_panel_messages = ['1) Add object', '2) Remove object']
+            else:
+                action_panel_messages = ['1) Add object']
+
 
 
 if __name__ == '__main__':

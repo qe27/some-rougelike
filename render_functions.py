@@ -13,13 +13,13 @@ def render_all(con, messages_panel, action_panel, action_panel_x, action_panel_y
         # Draw all the tiles in the game map
         for y in range(game_map.height):
             for x in range(game_map.width):
+                libtcod.console_set_char_background(con, x, y, colors.get('dark_ground'), libtcod.BKGND_SET)
+                # if game_map.tiles[x][y].exists:
+                #     libtcod.console_set_char_background(con, x, y, colors.get('dark_ground'), libtcod.BKGND_SET)
+                # else:
+                #     libtcod.console_set_char_background(con, x, y, colors.get('dark_wall'), libtcod.BKGND_SET)
 
-                if game_map.tiles[x][y].exists:
-                    libtcod.console_set_char_background(con, x, y, colors.get('dark_ground'), libtcod.BKGND_SET)
-                else:
-                    libtcod.console_set_char_background(con, x, y, colors.get('dark_wall'), libtcod.BKGND_SET)
-
-                draw_objects(con, game_map.tiles[x][y].objects)
+                draw_objects(con, game_map.tiles[x][y])
                 if game_state == GameStates.PAUSED and additional_render_params['selected_tile']:
                     draw_selector(con, additional_render_params['selected_tile'], colors)
 
@@ -59,10 +59,10 @@ def clear_all(con, game_map):
             clear_entity(con, game_map.tiles[x][y])
 
 
-def draw_objects(con, objects):
-    if objects:
-        libtcod.console_set_default_foreground(con, objects[0].color)
-        libtcod.console_put_char(con, objects[0].tile.x, objects[0].tile.y, objects[0].char, libtcod.BKGND_NONE)
+def draw_objects(con, tile):
+    if tile.objects:
+        libtcod.console_set_default_foreground(con, tile.getColor())
+        libtcod.console_put_char(con, tile.x, tile.y, tile.getChar(), libtcod.BKGND_NONE)
 
 def clear_entity(con, tile):
     # erase the character that represents this object

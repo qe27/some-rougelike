@@ -1,6 +1,7 @@
-import tcod as libtcod
+import tcod
 
 from map_objects.tile import Tile
+from objects.game_objects.map_object import MapObject
 
 
 class WorldMap:
@@ -12,14 +13,15 @@ class WorldMap:
 
     def initialize_tiles(self):
         tiles = [[Tile(self, x, y) for y in range(self.height)] for x in range(self.width)]
-
         return tiles
 
     def make_map(self):
-        for x in range(self.width):
-            for y in range(self.height):
-                if (5 < x < 25) and (5 < y < 25):
-                    self.tiles[x][y].exists = True
+        self.tiles[10][20].objects.append(MapObject('Test', 'Test Description', tcod.cyan, '@'))
+        # for x in range(self.width):
+        #     for y in range(self.height):
+        #         if (5 < x < 25) and (5 < y < 25):
+        #             1 + 1
+        #             self.tiles[10][20].objects.append(MapObject('Test', 'Test Description', tcod.COLOR_CYAN, '@'))
 
         # for test purposes
         # self.prepare_test_requisites()
