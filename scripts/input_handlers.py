@@ -27,6 +27,8 @@ def handle_paused_keys(key):
         return {'change_speed': -1}
     elif key.vk == libtcod.KEY_SPACE:
         return {'toggle_pause': True}
+    elif key.vk == libtcod.KEY_ENTER:
+        return {'action': True}
 
     return {}
 
@@ -38,5 +40,7 @@ def handle_in_progress_keys(key):
         return {'change_speed': 1}
     elif key.vk == libtcod.KEY_KPSUB:
         return {'change_speed': -1}
+    elif key.vk == libtcod.KEY_ENTER:
+        return {'action': True}
 
     return {}

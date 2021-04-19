@@ -14,7 +14,7 @@ class Tile:
         self.objects = []
         if game_object is not None:
             self.objects.append(game_object)
-            game_object.tile = self
+        #    game_object.tile = self
 
     def isNear(self, tile):
         if abs(self.x - tile.x) <= 1 and abs(self.y - tile.y) <= 1:
