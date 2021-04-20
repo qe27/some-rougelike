@@ -5,8 +5,12 @@ import tcod as libtcod
 from map_objects.game_map import WorldMap
 from map_objects.map_manager import MapManager
 from render_functions import render_all, clear_all
+from scripts.engine.active_state import ActiveStates
+from scripts.engine.current_active_state import CurrentActiveState
 from scripts.engine.game_messages import MessageLog
 from scripts.engine.handlers.debug_handler import handle_debug
+from scripts.engine.handlers.key_handlers.debug_key_handler import handle
+from scripts.engine.handlers.messages_handle import get_action_messages
 from scripts.game_states import GameStates
 from scripts.input_handlers import handle_keys
 import operator
@@ -23,6 +27,7 @@ def main():
     # game_state = GameStates.PAUSED
     game_state = GameStates.PAUSED
     debug = True
+    CurrentActiveState.ACTIVE_STATE = ActiveStates.DEBUG
     # m_panel_y = screen_height - m_panel_height
     # a_panel_y = screen_height - a_panel_height - m_panel_height
 
@@ -68,8 +73,10 @@ def main():
                    m_panel_height, colors, additional_render_params, game_state, message_log, action_panel_messages)
         libtcod.console_flush()
 
+        action_panel_messages = get_action_messages()
         key_action = handle_keys(key, game_state)
         selector_move = key_action.get('selector_move')
+        # selector_move = key_action.get('key_1')
         action = key_action.get('action')
 
         if selector_move:
@@ -79,13 +86,7 @@ def main():
         clear_all(con, MapManager.map)
 
         if debug:
-            # handle_debug()
-            # if action:
-            if MapManager.map.tiles[selected_tile[0]][selected_tile[1]].objects:
-                action_panel_messages = ['1) Add object', '2) Remove object']
-            else:
-                action_panel_messages = ['1) Add object']
-
+            handle_debug(MapManager.map.tiles[selected_tile[0]][selected_tile[1]], action_panel_messages, key_action)
 
 
 if __name__ == '__main__':
