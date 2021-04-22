@@ -1,15 +1,12 @@
-import time
-
 import tcod as libtcod
 
 from map_objects.game_map import WorldMap
 from map_objects.map_manager import MapManager
-from render_functions import render_all, clear_all
+from rendering.render_functions import render_all, clear_all
 from scripts.engine.active_state import ActiveStates
 from scripts.engine.current_active_state import CurrentActiveState
 from scripts.engine.game_messages import MessageLog
 from scripts.engine.handlers.debug_handler import handle_debug
-from scripts.engine.handlers.key_handlers.debug_key_handler import handle
 from scripts.engine.handlers.messages_handle import get_action_messages
 from scripts.game_states import GameStates
 from scripts.input_handlers import handle_keys

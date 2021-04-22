@@ -2,6 +2,7 @@ from datetime import datetime
 
 import tcod as libtcod
 
+from rendering.menus import inventory_menu
 from scripts.game_states import GameStates
 
 
@@ -44,6 +45,8 @@ def render_all(con, messages_panel, action_panel, action_panel_x, action_panel_y
         y += 1
 
     libtcod.console_blit(action_panel, 0, 0, action_panel_width, action_panel_height, 0, action_panel_x, action_panel_y)
+
+    # inventory_menu(con, 'test', 50, screen_width, screen_height)
 
 
 def draw_selector(con, selector, colors):
