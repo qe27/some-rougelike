@@ -1,9 +1,19 @@
 from datetime import datetime
+from enum import Enum
 
 import tcod as libtcod
 
-from rendering.menus import inventory_menu
+from rendering.menus import selector_menu
 from scripts.game_states import GameStates
+
+
+class MenusRenderingState:
+    ACTIVE_RENDERING_STATE = None
+    OPTIONS = {}
+
+
+class MenusRenderingOptions(Enum):
+    SELECTOR_MENU = 1
 
 
 def render_all(con, messages_panel, action_panel, action_panel_x, action_panel_y, action_panel_width,
@@ -46,7 +56,8 @@ def render_all(con, messages_panel, action_panel, action_panel_x, action_panel_y
 
     libtcod.console_blit(action_panel, 0, 0, action_panel_width, action_panel_height, 0, action_panel_x, action_panel_y)
 
-    # inventory_menu(con, 'test', 50, screen_width, screen_height)
+    if MenusRenderingState.ACTIVE_RENDERING_STATE == MenusRenderingOptions.SELECTOR_MENU:
+        selector_menu(con, MenusRenderingState.OPTIONS.get('menu_title'), MenusRenderingState.OPTIONS.get('options'), 50, screen_width, screen_height)
 
 
 def draw_selector(con, selector, colors):

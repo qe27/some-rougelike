@@ -49,6 +49,16 @@ def handle_paused_keys(key):
         return {'key_9': True}
     elif key.vk == libtcod.KEY_0:
         return {'key_0': True}
+    elif key_char == 'a':
+        return {'key_a': True}
+    # elif key.vk == libtcod.KEY_b:
+    #     return {'key_a': True}
+    # elif key.vk == libtcod.KEY_a:
+    #     return {'key_a': True}
+    # elif key.vk == libtcod.KEY_a:
+    #     return {'key_a': True}
+    # elif key.vk == libtcod.KEY_a:
+    #     return {'key_a': True}
 
     return {}
 

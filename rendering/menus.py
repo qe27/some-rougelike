@@ -31,10 +31,8 @@ def menu(con, header, options, width, screen_width, screen_height):
     libtcod.console_blit(window, 0, 0, width, height, 0, x, y, 1.0, 0.7)
 
 
-def inventory_menu(con, header, inventory_width, screen_width, screen_height):
-    # show a menu with each item of the inventory as an option
-    options = ['test 1', 'test 2']
-
+def selector_menu(con, header, options, inventory_width, screen_width, screen_height):
+    # show a menu with each item in options
     menu(con, header, options, inventory_width, screen_width, screen_height)
 
 
