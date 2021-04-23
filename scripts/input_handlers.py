@@ -13,13 +13,13 @@ def handle_keys(key, game_state):
 def handle_paused_keys(key):
     key_char = chr(key.c)
 
-    if key.vk == libtcod.KEY_UP or key_char == 'k':
+    if key.vk == libtcod.KEY_UP:
         return {'selector_move': (0, -1)}
-    elif key.vk == libtcod.KEY_DOWN or key_char == 'j':
+    elif key.vk == libtcod.KEY_DOWN:
         return {'selector_move': (0, 1)}
-    elif key.vk == libtcod.KEY_LEFT or key_char == 'h':
+    elif key.vk == libtcod.KEY_LEFT:
         return {'selector_move': (-1, 0)}
-    elif key.vk == libtcod.KEY_RIGHT or key_char == 'l':
+    elif key.vk == libtcod.KEY_RIGHT:
         return {'selector_move': (1, 0)}
     elif key.vk == libtcod.KEY_KPADD:
         return {'change_speed': 1}
@@ -49,8 +49,9 @@ def handle_paused_keys(key):
         return {'key_9': True}
     elif key.vk == libtcod.KEY_0:
         return {'key_0': True}
-    elif key_char == 'a':
-        return {'key_a': True}
+    # elif key_char == 'a':
+    elif key_char:
+        return {'key_' + key_char: True}
     # elif key.vk == libtcod.KEY_b:
     #     return {'key_a': True}
     # elif key.vk == libtcod.KEY_a:

@@ -24,7 +24,7 @@ def render_all(con, messages_panel, action_panel, action_panel_x, action_panel_y
         # Draw all the tiles in the game map
         for y in range(game_map.height):
             for x in range(game_map.width):
-                libtcod.console_set_char_background(con, x, y, colors.get('dark_ground'), libtcod.BKGND_SET)
+                libtcod.console_set_char_background(con, x, y, libtcod.Color(15, 15, 15), libtcod.BKGND_SET)
                 # if game_map.tiles[x][y].exists:
                 #     libtcod.console_set_char_background(con, x, y, colors.get('dark_ground'), libtcod.BKGND_SET)
                 # else:

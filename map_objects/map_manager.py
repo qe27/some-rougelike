@@ -1,9 +1,3 @@
-import tcod
-
-from objects.game_objects.map_object import MapObject
-from objects.game_objects.settlements.settlement import Settlement
-
-
 class MapManager:
     map = None
 
@@ -13,6 +7,5 @@ class MapManager:
 
 
 def create_map_object(tile, options):
-    map_object_type = options.get('map_object_type')
-    if map_object_type == Settlement.__name__:
-        tile.objects.append(Settlement(name='Test', description='Test Description', color=tcod.cyan, char=None, options={}))
+    #tile.objects.append(River(name='Nile', description='Egyptian river', color=tcod.blue, char=None, options={}))
+    tile.objects.append(options.get('map_object_type')())

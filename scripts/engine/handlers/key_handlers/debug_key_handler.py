@@ -24,7 +24,6 @@ def handle_create(key_action, tile):
     key_2 = key_action.get('key_2')
     key_9 = key_action.get('key_9')
     key_0 = key_action.get('key_0')
-    types = [str(i.__name__) for i in MapObject.__subclasses__()]
 
     if key_9:
         # create_test_object(tile)
@@ -35,12 +34,12 @@ def handle_create(key_action, tile):
     if key_2:
         MenusRenderingState.ACTIVE_RENDERING_STATE = MenusRenderingOptions.SELECTOR_MENU
         MenusRenderingState.OPTIONS['menu_title'] = 'Select type from list'
-        MenusRenderingState.OPTIONS['options'] = types
+        MenusRenderingState.OPTIONS['options'] = [str(i.__name__) for i in MapObject.__subclasses__()]
         CurrentActiveState.ACTIVE_STATE = ActiveStates.DEBUG_CREATE_SET_TYPE
 
 
 def handle_select_type(key_action, tile):
-    types = [str(i.__name__) for i in MapObject.__subclasses__()]
+    types = MapObject.__subclasses__()
     letter_index = ord('a')
     for map_object_type in types:
         if key_action.get('key_' + chr(letter_index)):
