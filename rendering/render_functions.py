@@ -44,7 +44,8 @@ def render_all(con, messages_panel, action_panel, action_panel_x, action_panel_y
         libtcod.console_print_ex(messages_panel, 0, y, libtcod.BKGND_NONE, libtcod.LEFT, message.text)
         y += 1
 
-    libtcod.console_blit(messages_panel, 0, 0, messages_panel_width, messages_panel_height, 0, messages_panel_x, messages_panel_y)
+    libtcod.console_blit(messages_panel, 0, 0, messages_panel_width, messages_panel_height, 0, messages_panel_x,
+                         messages_panel_y)
 
     action_panel.clear()
 
@@ -57,7 +58,8 @@ def render_all(con, messages_panel, action_panel, action_panel_x, action_panel_y
     libtcod.console_blit(action_panel, 0, 0, action_panel_width, action_panel_height, 0, action_panel_x, action_panel_y)
 
     if MenusRenderingState.ACTIVE_RENDERING_STATE == MenusRenderingOptions.SELECTOR_MENU:
-        selector_menu(con, MenusRenderingState.OPTIONS.get('menu_title'), MenusRenderingState.OPTIONS.get('options'), 50, screen_width, screen_height)
+        selector_menu(con, MenusRenderingState.OPTIONS.get('menu_title'), MenusRenderingState.OPTIONS.get('options'),
+                      50)
 
 
 def draw_selector(con, selector, colors):
@@ -77,6 +79,7 @@ def draw_objects(con, tile):
     if tile.objects:
         libtcod.console_set_default_foreground(con, tile.getColor())
         libtcod.console_put_char(con, tile.x, tile.y, tile.getChar(), libtcod.BKGND_NONE)
+
 
 def clear_entity(con, tile):
     # erase the character that represents this object

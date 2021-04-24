@@ -1,19 +1,22 @@
 import tcod as libtcod
 from tcod.console import Console
 
+import global_variables
+from rendering.screen_options import ScreenOptions
 
-def menu(con, header, options, width, screen_width, screen_height):
+
+def menu(header, options, width):
     if len(options) > 26: raise ValueError('Cannot have a menu with more than 26 options.')
 
     # calculate total height for the header (after auto-wrap) and one line per option
-    header_height = libtcod.console_get_height_rect(con, 0, 0, width, screen_height, header)
+    header_height = libtcod.console_get_height_rect(global_variables.CONSOLE, 0, 0, width, ScreenOptions.SCREEN_HEIGHT, header)
     height = len(options) + header_height
 
     # create an off-screen console that represents the menu's window
     window = libtcod.console_new(width, height)
 
     # print the header, with auto-wrap
-    libtcod.console_set_default_foreground(window, libtcod.white)
+    libtcod.console_set_default_foreground(window, libtcod.green)
     libtcod.console_print_rect_ex(window, 0, 0, width, height, libtcod.BKGND_NONE, libtcod.LEFT, header)
 
     # print all the options
@@ -26,14 +29,45 @@ def menu(con, header, options, width, screen_width, screen_height):
         letter_index += 1
 
     # blit the contents of "window" to the root console
-    x = int(screen_width / 2 - width / 2)
-    y = int(screen_height / 2 - height / 2)
+    x = int(ScreenOptions.SCREEN_WIDTH / 2 - width / 2)
+    y = int(ScreenOptions.SCREEN_HEIGHT / 2 - height / 2)
     libtcod.console_blit(window, 0, 0, width, height, 0, x, y, 1.0, 0.7)
 
 
-def selector_menu(con, header, options, inventory_width, screen_width, screen_height):
+    #compute x and y offsets to convert console position to menu position
+    x_offset = x #x is the left edge of the menu
+    y_offset = y + header_height #subtract the height of the header from the top edge of the menu
+    key = libtcod.Key()
+    mouse = libtcod.Mouse()
+
+    while True:
+        # present the root console to the player and check for input
+        libtcod.console_flush()
+        libtcod.sys_check_for_event(libtcod.EVENT_KEY_PRESS | libtcod.EVENT_MOUSE, key, mouse)
+
+        if mouse.lbutton_pressed:
+            (menu_x, menu_y) = (mouse.cx - x_offset, mouse.cy - y_offset)
+            # check if click is within the menu and on a choice
+            if menu_x >= 0 and menu_x < width and menu_y >= 0 and menu_y < height - header_height:
+                return menu_y
+
+        if mouse.rbutton_pressed or key.vk == libtcod.KEY_ESCAPE:
+            return None  # cancel if the player right-clicked or pressed Escape
+
+        if key.vk == libtcod.KEY_ENTER and key.lalt:
+            # Alt+Enter: toggle fullscreen
+            libtcod.console_set_fullscreen(not libtcod.console_is_fullscreen())
+
+        # convert the ASCII code to an index; if it corresponds to an option, return it
+        index = key.c - ord('a')
+        if index >= 0 and index < len(options): return index
+        # if they pressed a letter that is not an option, return None
+        if index >= 0 and index <= 26: return None
+
+
+def selector_menu(con, header, options, inventory_width):
     # show a menu with each item in options
-    menu(con, header, options, inventory_width, screen_width, screen_height)
+    menu(con, header, options, inventory_width)
 
 
 def main_menu(con, background_image, screen_width, screen_height):
@@ -45,7 +79,7 @@ def main_menu(con, background_image, screen_width, screen_height):
     libtcod.console_print_ex(0, int(screen_width / 2), int(screen_height - 2), libtcod.BKGND_NONE, libtcod.CENTER,
                              'By (Your name here)')
 
-    menu(con, '', ['Play a new game', 'Continue last game', 'Quit'], 24, screen_width, screen_height)
+    menu(con, '', ['Play a new game', 'Continue last game', 'Quit'], 24)
 
 
 def race_selection_menu(con, background_image, screen_width, screen_height):
@@ -57,12 +91,12 @@ def race_selection_menu(con, background_image, screen_width, screen_height):
     # libtcod.console_print_ex(0, int(screen_width / 2), int(screen_height - 2), libtcod.BKGND_NONE, libtcod.CENTER,
     #                          'b) Khajiit')
 
-    menu(con, '', ['Human', 'Khajiit'], 24, screen_width, screen_height)
+    menu(con, '', ['Human', 'Khajiit'], 24)
     libtcod.console_flush()
 
 
 def message_box(con, header, width, screen_width, screen_height):
-    menu(con, header, [], width, screen_width, screen_height)
+    menu(con, header, [], width)
 
 
 def character_screen(player, character_screen_width, character_screen_height, screen_width, screen_height):
@@ -95,4 +129,4 @@ def level_up_menu(con, header, player, menu_width, screen_width, screen_height):
                'Strength (+1 attack, from {0})'.format(player.fighter.power),
                'Agility (+1 defense, from {0})'.format(player.fighter.defense)]
 
-    menu(con, header, options, menu_width, screen_width, screen_height)
+    menu(con, header, options, menu_width)

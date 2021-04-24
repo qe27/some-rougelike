@@ -1,6 +1,8 @@
 # from map_objects.map_manager import create_test_object
 from map_objects.map_manager import create_map_object
 from objects.game_objects.map_object import MapObject
+from rendering import menus
+from rendering.menus import menu
 from rendering.render_functions import MenusRenderingState, MenusRenderingOptions
 from scripts.engine.active_state import ActiveStates
 from scripts.engine.current_active_state import CurrentActiveState
@@ -32,10 +34,14 @@ def handle_create(key_action, tile):
     if key_0:
         CurrentActiveState.ACTIVE_STATE = ActiveStates.DEBUG
     if key_2:
-        MenusRenderingState.ACTIVE_RENDERING_STATE = MenusRenderingOptions.SELECTOR_MENU
-        MenusRenderingState.OPTIONS['menu_title'] = 'Select type from list'
-        MenusRenderingState.OPTIONS['options'] = [str(i.__name__) for i in MapObject.__subclasses__()]
-        CurrentActiveState.ACTIVE_STATE = ActiveStates.DEBUG_CREATE_SET_TYPE
+        # MenusRenderingState.ACTIVE_RENDERING_STATE = MenusRenderingOptions.SELECTOR_MENU
+        # MenusRenderingState.OPTIONS['menu_title'] = 'Select type from list'
+        # MenusRenderingState.OPTIONS['options'] = [str(i.__name__) for i in MapObject.__subclasses__()]
+        # CurrentActiveState.ACTIVE_STATE = ActiveStates.DEBUG_CREATE_SET_TYPE
+        classes = MapObject.__subclasses__()
+        index_to_classes_map = {i : classes[i] for i in range(0, len(classes))}
+        SelectedOptions.options['map_object_type'] = index_to_classes_map.get(menu('Select Type', [str(i.__name__) for i in classes], 50))
+        # menu('Select Type', [str(i.__name__) for i in classes], 50)
 
 
 def handle_select_type(key_action, tile):
