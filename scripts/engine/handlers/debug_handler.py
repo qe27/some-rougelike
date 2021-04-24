@@ -6,7 +6,8 @@ from scripts.engine.handlers.key_handlers.debug_key_handler import handle, handl
 def handle_debug(tile, action_panel_messages, key_action):
     # if action:
     if CurrentActiveState.ACTIVE_STATE == ActiveStates.DEBUG:
-        if tile.objects:
+        # if tile.objects:
+        if tile.tile_structure.get_structures():
             action_panel_messages[:] = ['1 - Add object', '2 - Remove object']
         else:
             action_panel_messages[:] = ['1 - Add object']

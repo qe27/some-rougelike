@@ -9,6 +9,7 @@ from scripts.engine.active_state import ActiveStates
 from scripts.engine.current_active_state import CurrentActiveState
 from scripts.engine.game_messages import MessageLog
 from scripts.engine.handlers.debug_handler import handle_debug
+from scripts.engine.handlers.key_handlers.selected_options import SelectedOptions
 from scripts.engine.handlers.messages_handle import get_action_messages
 from scripts.game_states import GameStates
 from scripts.input_handlers import handle_keys
@@ -46,7 +47,7 @@ def main():
     a_panel = libtcod.console_new(panel_width, a_panel_height)
 
     MapManager.map = WorldMap(map_width, map_height)
-    MapManager.map.make_map()
+    # MapManager.map.make_map()
 
     additional_render_params = {}
 

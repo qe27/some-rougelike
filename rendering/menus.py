@@ -5,12 +5,14 @@ import global_variables
 from rendering.screen_options import ScreenOptions
 
 
-def menu(header, options, width):
+def menu(header, options, width, cancellabe=True):
     if len(options) > 26: raise ValueError('Cannot have a menu with more than 26 options.')
 
     # calculate total height for the header (after auto-wrap) and one line per option
     header_height = libtcod.console_get_height_rect(global_variables.CONSOLE, 0, 0, width, ScreenOptions.SCREEN_HEIGHT, header)
     height = len(options) + header_height
+    if cancellabe:
+        height += 1
 
     # create an off-screen console that represents the menu's window
     window = libtcod.console_new(width, height)
@@ -27,6 +29,10 @@ def menu(header, options, width):
         libtcod.console_print_ex(window, 0, y, libtcod.BKGND_NONE, libtcod.LEFT, text)
         y += 1
         letter_index += 1
+
+    if cancellabe:
+        libtcod.console_print_ex(window, 0, y, libtcod.BKGND_NONE, libtcod.LEFT, '(Esc) Cancel')
+
 
     # blit the contents of "window" to the root console
     x = int(ScreenOptions.SCREEN_WIDTH / 2 - width / 2)
@@ -48,10 +54,12 @@ def menu(header, options, width):
         if mouse.lbutton_pressed:
             (menu_x, menu_y) = (mouse.cx - x_offset, mouse.cy - y_offset)
             # check if click is within the menu and on a choice
-            if menu_x >= 0 and menu_x < width and menu_y >= 0 and menu_y < height - header_height:
+            if cancellabe and menu_y == len(options):
+                return None
+            if 0 <= menu_x < width and 0 <= menu_y < height - header_height:
                 return menu_y
 
-        if mouse.rbutton_pressed or key.vk == libtcod.KEY_ESCAPE:
+        if key.vk == libtcod.KEY_ESCAPE:
             return None  # cancel if the player right-clicked or pressed Escape
 
         if key.vk == libtcod.KEY_ENTER and key.lalt:
@@ -60,9 +68,9 @@ def menu(header, options, width):
 
         # convert the ASCII code to an index; if it corresponds to an option, return it
         index = key.c - ord('a')
-        if index >= 0 and index < len(options): return index
+        if 0 <= index < len(options): return index
         # if they pressed a letter that is not an option, return None
-        if index >= 0 and index <= 26: return None
+        # if index >= 0 and index <= 26: return None
 
 
 def selector_menu(con, header, options, inventory_width):

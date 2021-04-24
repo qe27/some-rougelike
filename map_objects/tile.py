@@ -1,4 +1,5 @@
 from map_objects.map_manager import MapManager
+from objects.game_objects.tile_structure import TileStructure
 
 
 class Tile:
@@ -6,7 +7,7 @@ class Tile:
     A tile on a map. It contains objects.
     """
 
-    def __init__(self, game_map=MapManager.map, x=None, y=None, game_object=None):
+    def __init__(self, game_map=MapManager.map, x=None, y=None, tile_structure=None):
         """
         TODO: support list of objects
         """
@@ -14,20 +15,26 @@ class Tile:
         self.x = x
         self.y = y
         # self.exists = exists
-        self.objects = []
-        if game_object is not None:
-            self.objects.append(game_object)
-        #    game_object.tile = self
+        self.tile_ = []
+        if tile_structure:
+            self.tile_structure = tile_structure
+        else:
+            self.tile_structure = TileStructure()
+        self.tile_structure.tile = self
 
-    def isNear(self, tile):
+    def is_near(self, tile):
         if abs(self.x - tile.x) <= 1 and abs(self.y - tile.y) <= 1:
             return True
         return False
 
-    def getChar(self):
-        if self.objects:
-            return self.objects[0].char
+    def get_char(self):
+        if self.tile_structure:
+            return self.tile_structure.get_prior_object().char
 
-    def getColor(self):
-        if self.objects:
-            return self.objects[0].color
+    def get_color(self):
+        if self.tile_structure:
+            return self.tile_structure.get_prior_object().color
+
+    def get_landscape_objects(self):
+        if self.tile_structure:
+            return list(self.tile_structure.landscape.keys())

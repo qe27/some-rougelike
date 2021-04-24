@@ -1,6 +1,7 @@
 # from map_objects.map_manager import create_test_object
 from map_objects.map_manager import create_map_object
 from objects.game_objects.map_object import MapObject
+from objects.game_objects.structures.structure import Structure
 from rendering import menus
 from rendering.menus import menu
 from rendering.render_functions import MenusRenderingState, MenusRenderingOptions
@@ -14,34 +15,50 @@ def handle(key_action, tile):
     key_2 = key_action.get('key_2')
     key_3 = key_action.get('key_3')
 
-    if tile.objects:
-        if key_2:
-            del tile.objects[0]
+    # if tile.objects:
+    #     if key_2:
+    #         del tile.objects[0]
     if key_1:
         CurrentActiveState.ACTIVE_STATE = ActiveStates.DEBUG_CREATE
 
 
 def handle_create(key_action, tile):
+    #add edit field
     key_1 = key_action.get('key_1')
     key_2 = key_action.get('key_2')
+    key_3 = key_action.get('key_3')
     key_9 = key_action.get('key_9')
     key_0 = key_action.get('key_0')
 
+    if SelectedOptions.options.get('selected_landscape_object') \
+            and SelectedOptions.options.get('selected_landscape_object').tile_structure.tile != tile:
+        if len(tile.tile_structure.landscape) == 1:
+            SelectedOptions.options['selected_landscape_object'] = list(tile.tile_structure.landscape.keys())[0]
+        else:
+            SelectedOptions.options['selected_landscape_object'] = None
+
+    if SelectedOptions.options.get('selected_landscape_object') is None and len(tile.tile_structure.landscape) == 1:
+        if len(tile.tile_structure.landscape) == 1:
+            SelectedOptions.options['selected_landscape_object'] = list(tile.tile_structure.landscape.keys())[0]
+
+    if key_3:
+        landscape = tile.get_landscape_objects()
+        selected_option = menu('Select map object', [i.type for i in landscape], 50)
+        if selected_option is None:
+            CurrentActiveState.ACTIVE_STATE = ActiveStates.DEBUG
+        else:
+            SelectedOptions.options['selected_landscape_object'] = landscape[selected_option]
+
     if key_9:
-        # create_test_object(tile)
-        # CurrentActiveState.ACTIVE_STATE = ActiveStates.DEBUG
-        create_map_object(tile, SelectedOptions.options)
+        # add validation
+        create_map_object(tile.tile_structure, SelectedOptions.options)
     if key_0:
         CurrentActiveState.ACTIVE_STATE = ActiveStates.DEBUG
     if key_2:
-        # MenusRenderingState.ACTIVE_RENDERING_STATE = MenusRenderingOptions.SELECTOR_MENU
-        # MenusRenderingState.OPTIONS['menu_title'] = 'Select type from list'
-        # MenusRenderingState.OPTIONS['options'] = [str(i.__name__) for i in MapObject.__subclasses__()]
-        # CurrentActiveState.ACTIVE_STATE = ActiveStates.DEBUG_CREATE_SET_TYPE
-        classes = MapObject.__subclasses__()
-        index_to_classes_map = {i : classes[i] for i in range(0, len(classes))}
-        SelectedOptions.options['map_object_type'] = index_to_classes_map.get(menu('Select Type', [str(i.__name__) for i in classes], 50))
-        # menu('Select Type', [str(i.__name__) for i in classes], 50)
+        classes = Structure.__subclasses__()
+        index_to_classes_map = {i: classes[i] for i in range(0, len(classes))}
+        SelectedOptions.options['map_object_type'] = index_to_classes_map.get(
+            menu('Select Type', [str(i.__name__) for i in classes], 50))
 
 
 def handle_select_type(key_action, tile):

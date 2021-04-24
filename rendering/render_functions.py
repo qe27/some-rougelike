@@ -76,9 +76,8 @@ def clear_all(con, game_map):
 
 
 def draw_objects(con, tile):
-    if tile.objects:
-        libtcod.console_set_default_foreground(con, tile.getColor())
-        libtcod.console_put_char(con, tile.x, tile.y, tile.getChar(), libtcod.BKGND_NONE)
+    libtcod.console_set_default_foreground(con, tile.get_color())
+    libtcod.console_put_char(con, tile.x, tile.y, tile.get_char(), libtcod.BKGND_NONE)
 
 
 def clear_entity(con, tile):
