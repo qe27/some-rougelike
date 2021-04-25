@@ -17,9 +17,6 @@ import operator
 
 
 def main():
-    a_panel_height = ScreenOptions.SCREEN_HEIGHT // 5
-    m_panel_height = ScreenOptions.SCREEN_HEIGHT - a_panel_height
-    panel_width = ScreenOptions.SCREEN_WIDTH // 3
     map_width = 80
     map_height = 45
     game_state = GameStates.PAUSED
@@ -29,7 +26,7 @@ def main():
     bar_width = 20
     message_x = bar_width + 2
     message_width = ScreenOptions.SCREEN_WIDTH - bar_width - 2
-    message_height = m_panel_height - 1
+    message_height = ScreenOptions.M_PANEL_HEIGHT - 1
 
     colors = {
         'dark_wall': libtcod.Color(0, 0, 100),
@@ -43,8 +40,6 @@ def main():
     libtcod.console_init_root(ScreenOptions.SCREEN_WIDTH, ScreenOptions.SCREEN_HEIGHT, 'shop game', False)
 
     global_variables.CONSOLE = libtcod.console_new(ScreenOptions.SCREEN_WIDTH, ScreenOptions.SCREEN_HEIGHT)
-    m_panel = libtcod.console_new(panel_width, m_panel_height)
-    a_panel = libtcod.console_new(panel_width, a_panel_height)
 
     MapManager.map = WorldMap(map_width, map_height)
     # MapManager.map.make_map()
@@ -62,10 +57,7 @@ def main():
 
     while not libtcod.console_is_window_closed():
         libtcod.sys_check_for_event(libtcod.EVENT_KEY_PRESS | libtcod.EVENT_MOUSE, key, mouse)
-        render_all(global_variables.CONSOLE, m_panel, a_panel, ScreenOptions.SCREEN_WIDTH - panel_width, 0, panel_width, a_panel_height,
-                   ScreenOptions.SCREEN_WIDTH - panel_width, a_panel_height, panel_width, m_panel_height,
-                   MapManager.map, ScreenOptions.SCREEN_WIDTH, ScreenOptions.SCREEN_HEIGHT,
-                   m_panel_height, colors, additional_render_params, game_state, message_log, action_panel_messages)
+        render_all(colors, additional_render_params, game_state, message_log, action_panel_messages, game_map=MapManager.map)
         libtcod.console_flush()
 
         action_panel_messages = get_action_messages()
@@ -75,9 +67,13 @@ def main():
         action = key_action.get('action')
 
         if mouse.lbutton_pressed:
-            print('mouse x: %d         mouse y: %d' % (mouse.cx, mouse.cy))
-            selected_tile = (mouse.cx, mouse.cy)
-            additional_render_params['selected_tile'] = selected_tile
+            if 0 <= mouse.cx <= map_width and 0 <= mouse.cy <= map_height:
+                print('mouse x: %d         mouse y: %d' % (mouse.cx, mouse.cy))
+                selected_tile = (mouse.cx, mouse.cy)
+                additional_render_params['selected_tile'] = selected_tile
+            elif ScreenOptions.SCREEN_WIDTH - 10 <= mouse.cx <= ScreenOptions.SCREEN_WIDTH and \
+                    ScreenOptions.SCREEN_WIDTH - 3 <= mouse.cy <= ScreenOptions.SCREEN_HEIGHT:
+                print('pressed end turn button!!!')
 
         if selector_move:
             selected_tile = tuple(map(operator.add, selected_tile, selector_move))

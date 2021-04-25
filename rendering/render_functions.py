@@ -3,7 +3,10 @@ from enum import Enum
 
 import tcod as libtcod
 
+import global_variables
+from map_objects.map_manager import MapManager
 from rendering.menus import selector_menu
+from rendering.screen_options import ScreenOptions
 from scripts.game_states import GameStates
 
 
@@ -16,10 +19,16 @@ class MenusRenderingOptions(Enum):
     SELECTOR_MENU = 1
 
 
-def render_all(con, messages_panel, action_panel, action_panel_x, action_panel_y, action_panel_width,
-               action_panel_height, messages_panel_x, messages_panel_y, messages_panel_width, messages_panel_height,
-               game_map, screen_width, screen_height, panel_height, colors,
-               additional_render_params, game_state, message_log, action_panel_messages):
+m_panel = libtcod.console_new(ScreenOptions.PANEL_WIDTH, ScreenOptions.M_PANEL_HEIGHT)
+a_panel = libtcod.console_new(ScreenOptions.PANEL_WIDTH, ScreenOptions.A_PANEL_HEIGHT)
+
+
+def render_all(colors, additional_render_params, game_state, message_log, action_panel_messages, messages_panel=m_panel,
+               action_panel=a_panel, action_panel_x=ScreenOptions.SCREEN_WIDTH - ScreenOptions.PANEL_WIDTH,
+               action_panel_y=0, action_panel_width=ScreenOptions.PANEL_WIDTH, action_panel_height=ScreenOptions.A_PANEL_HEIGHT,
+               messages_panel_x=ScreenOptions.SCREEN_WIDTH - ScreenOptions.PANEL_WIDTH, messages_panel_y=ScreenOptions.A_PANEL_HEIGHT,
+               messages_panel_width=ScreenOptions.PANEL_WIDTH, messages_panel_height=ScreenOptions.M_PANEL_HEIGHT,
+               con=global_variables.CONSOLE, game_map=MapManager.map, screen_width=ScreenOptions.SCREEN_WIDTH, screen_height=ScreenOptions.SCREEN_HEIGHT):
     if game_state == GameStates.IN_PROGRESS or game_state == GameStates.PAUSED:
         # Draw all the tiles in the game map
         for y in range(game_map.height):
