@@ -7,10 +7,7 @@ def handle_debug(tile, action_panel_messages, key_action):
     # if action:
     if CurrentActiveState.ACTIVE_STATE == ActiveStates.DEBUG:
         # if tile.objects:
-        if tile.tile_structure.get_structures():
-            action_panel_messages[:] = ['1 - Add object', '2 - Remove object']
-        else:
-            action_panel_messages[:] = ['1 - Add object']
+        action_panel_messages[:] = ['1 - Add object', '2 - Add resource source', '3 - Delete']
         handle(key_action, tile)
     elif CurrentActiveState.ACTIVE_STATE == ActiveStates.DEBUG_CREATE:
         handle_create(key_action, tile)

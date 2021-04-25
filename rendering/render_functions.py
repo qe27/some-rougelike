@@ -9,7 +9,7 @@ from scripts.game_states import GameStates
 
 class MenusRenderingState:
     ACTIVE_RENDERING_STATE = None
-    OPTIONS = {}
+    OPTIONS = {"draw_end_turn_button": True}
 
 
 class MenusRenderingOptions(Enum):
@@ -60,6 +60,22 @@ def render_all(con, messages_panel, action_panel, action_panel_x, action_panel_y
     if MenusRenderingState.ACTIVE_RENDERING_STATE == MenusRenderingOptions.SELECTOR_MENU:
         selector_menu(con, MenusRenderingState.OPTIONS.get('menu_title'), MenusRenderingState.OPTIONS.get('options'),
                       50)
+
+    end_turn_button = libtcod.console_new(10, 3)
+    if MenusRenderingState.OPTIONS.get("draw_end_turn_button"):
+        draw_end_turn_button(end_turn_button)
+        libtcod.console_blit(end_turn_button, 0, 0, 10, 3, 0, screen_width - 10,
+                             screen_height - 3)
+
+
+def draw_end_turn_button(con):
+    for x in range(0, 10):
+        for y in range(0, 3):
+            libtcod.console_set_char_background(con, x, y, libtcod.Color(250, 250, 0), libtcod.BKGND_SET)
+    libtcod.console_set_default_foreground(con, libtcod.black)
+    libtcod.console_print_ex(con, 1, 1, libtcod.BKGND_NONE, libtcod.LEFT, 'END TURN')
+
+
 
 
 def draw_selector(con, selector, colors):

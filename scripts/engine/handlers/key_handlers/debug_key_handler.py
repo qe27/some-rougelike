@@ -1,6 +1,7 @@
 # from map_objects.map_manager import create_test_object
-from map_objects.map_manager import create_map_object
+from map_objects.map_manager import create_map_object, create_resource_source
 from objects.game_objects.map_object import MapObject
+from objects.game_objects.resources.resources_types import RESOURCES_DICT
 from objects.game_objects.structures.structure import Structure
 from rendering import menus
 from rendering.menus import menu
@@ -20,6 +21,20 @@ def handle(key_action, tile):
     #         del tile.objects[0]
     if key_1:
         CurrentActiveState.ACTIVE_STATE = ActiveStates.DEBUG_CREATE
+    if key_2:
+        # available_tile_terrains = tile.get_terrain_objects
+        selected_option = menu('Select terrain object', list(map(lambda x: x.type, tile.get_terrain_objects())), 50)
+        if selected_option is None:
+            return
+        selected_terrain = tile.get_terrain_objects()[selected_option]
+        available_resource_types = list(RESOURCES_DICT.keys())
+        selected_option = menu('Select resource type', available_resource_types, 50)
+        if selected_option is None:
+            return
+        selected_resource_type = available_resource_types[selected_option]
+        created_source = create_resource_source(selected_terrain, selected_resource_type)
+        print('Created resource source with type :' + created_source.resource_type + 'on tile : ' +
+              str(created_source.terrain.tile_structure.tile.x) + ',' + str(created_source.terrain.tile_structure.tile.y))
 
 
 def handle_create(key_action, tile):
@@ -30,24 +45,24 @@ def handle_create(key_action, tile):
     key_9 = key_action.get('key_9')
     key_0 = key_action.get('key_0')
 
-    if SelectedOptions.options.get('selected_landscape_object') \
-            and SelectedOptions.options.get('selected_landscape_object').tile_structure.tile != tile:
-        if len(tile.tile_structure.landscape) == 1:
-            SelectedOptions.options['selected_landscape_object'] = list(tile.tile_structure.landscape.keys())[0]
+    if SelectedOptions.options.get('selected_terrain_object') \
+            and SelectedOptions.options.get('selected_terrain_object').tile_structure.tile != tile:
+        if len(tile.tile_structure.terrain) == 1:
+            SelectedOptions.options['selected_terrain_object'] = list(tile.tile_structure.terrain.keys())[0]
         else:
-            SelectedOptions.options['selected_landscape_object'] = None
+            SelectedOptions.options['selected_terrain_object'] = None
 
-    if SelectedOptions.options.get('selected_landscape_object') is None and len(tile.tile_structure.landscape) == 1:
-        if len(tile.tile_structure.landscape) == 1:
-            SelectedOptions.options['selected_landscape_object'] = list(tile.tile_structure.landscape.keys())[0]
+    if SelectedOptions.options.get('selected_terrain_object') is None and len(tile.tile_structure.terrain) == 1:
+        if len(tile.tile_structure.terrain) == 1:
+            SelectedOptions.options['selected_terrain_object'] = list(tile.tile_structure.terrain.keys())[0]
 
     if key_3:
-        landscape = tile.get_landscape_objects()
-        selected_option = menu('Select map object', [i.type for i in landscape], 50)
+        terrain = tile.get_terrain_objects()
+        selected_option = menu('Select map object', [i.type for i in terrain], 50)
         if selected_option is None:
             CurrentActiveState.ACTIVE_STATE = ActiveStates.DEBUG
         else:
-            SelectedOptions.options['selected_landscape_object'] = landscape[selected_option]
+            SelectedOptions.options['selected_terrain_object'] = terrain[selected_option]
 
     if key_9:
         # add validation

@@ -35,6 +35,6 @@ class Tile:
         if self.tile_structure:
             return self.tile_structure.get_prior_object().color
 
-    def get_landscape_objects(self):
+    def get_terrain_objects(self):
         if self.tile_structure:
-            return list(self.tile_structure.landscape.keys())
+            return list(self.tile_structure.terrain.keys())
