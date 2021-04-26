@@ -38,3 +38,11 @@ class Tile:
     def get_terrain_objects(self):
         if self.tile_structure:
             return list(self.tile_structure.terrain.keys())
+
+    def get_tile_info_to_print(self):
+        result = []
+        for i in list(self.tile_structure.terrain.keys()):
+            result.append((i, i.type, i.color))
+            for j in i.structures:
+                result.append((j, '|__' + j.name, j.color))
+        return result

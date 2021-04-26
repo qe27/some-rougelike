@@ -20,3 +20,11 @@ class MapObject:
                 structures_of_type.extend(i)
         return structures_of_type
 
+    def get_object_description(self):
+        return {'Change name': self.change_name, 'Get description': self.get_description_function}
+
+    def change_name(self):
+        print('change name function was called')
+
+    def get_description_function(self):
+        print('get description function was called')

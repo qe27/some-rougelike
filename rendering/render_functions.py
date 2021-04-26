@@ -4,9 +4,10 @@ from enum import Enum
 import tcod as libtcod
 
 import global_variables
+from global_variables import *
 from map_objects.map_manager import MapManager
 from rendering.menus import selector_menu
-from rendering.screen_options import ScreenOptions
+from rendering.screen_options import *
 from scripts.game_states import GameStates
 
 
@@ -19,16 +20,20 @@ class MenusRenderingOptions(Enum):
     SELECTOR_MENU = 1
 
 
-m_panel = libtcod.console_new(ScreenOptions.PANEL_WIDTH, ScreenOptions.M_PANEL_HEIGHT)
-a_panel = libtcod.console_new(ScreenOptions.PANEL_WIDTH, ScreenOptions.A_PANEL_HEIGHT)
+m_panel = libtcod.console_new(PANEL_WIDTH, M_PANEL_HEIGHT)
+a_panel = libtcod.console_new(PANEL_WIDTH, A_PANEL_HEIGHT)
+info_panel = libtcod.console_new(PANEL_WIDTH, A_PANEL_HEIGHT)
 
 
-def render_all(colors, additional_render_params, game_state, message_log, action_panel_messages, messages_panel=m_panel,
-               action_panel=a_panel, action_panel_x=ScreenOptions.SCREEN_WIDTH - ScreenOptions.PANEL_WIDTH,
-               action_panel_y=0, action_panel_width=ScreenOptions.PANEL_WIDTH, action_panel_height=ScreenOptions.A_PANEL_HEIGHT,
-               messages_panel_x=ScreenOptions.SCREEN_WIDTH - ScreenOptions.PANEL_WIDTH, messages_panel_y=ScreenOptions.A_PANEL_HEIGHT,
-               messages_panel_width=ScreenOptions.PANEL_WIDTH, messages_panel_height=ScreenOptions.M_PANEL_HEIGHT,
-               con=global_variables.CONSOLE, game_map=MapManager.map, screen_width=ScreenOptions.SCREEN_WIDTH, screen_height=ScreenOptions.SCREEN_HEIGHT):
+def render_all(colors, game_state, action_panel_messages, messages_panel=m_panel,
+               action_panel=a_panel, action_panel_x=SCREEN_WIDTH - PANEL_WIDTH,
+               action_panel_y=0, action_panel_width=PANEL_WIDTH,
+               action_panel_height=A_PANEL_HEIGHT,
+               messages_panel_x=SCREEN_WIDTH - PANEL_WIDTH,
+               messages_panel_y=A_PANEL_HEIGHT,
+               messages_panel_width=PANEL_WIDTH, messages_panel_height=M_PANEL_HEIGHT,
+               con=global_variables.CONSOLE, game_map=MapManager.map, screen_width=SCREEN_WIDTH,
+               screen_height=SCREEN_HEIGHT):
     if game_state == GameStates.IN_PROGRESS or game_state == GameStates.PAUSED:
         # Draw all the tiles in the game map
         for y in range(game_map.height):
@@ -40,21 +45,17 @@ def render_all(colors, additional_render_params, game_state, message_log, action
                 #     libtcod.console_set_char_background(con, x, y, colors.get('dark_wall'), libtcod.BKGND_SET)
 
                 draw_objects(con, game_map.tiles[x][y])
-                if game_state == GameStates.PAUSED and additional_render_params['selected_tile']:
-                    draw_selector(con, additional_render_params['selected_tile'], colors)
+                if game_state == GameStates.PAUSED and global_variables.selected_tile:
+                    draw_selector(con, global_variables.selected_tile, colors)
 
     libtcod.console_blit(con, 0, 0, screen_width, screen_height, 0, 0, 0)
 
-    messages_panel.clear()
-
-    y = 1
-    for message in message_log.messages:
-        libtcod.console_set_default_foreground(messages_panel, message.color)
-        libtcod.console_print_ex(messages_panel, 0, y, libtcod.BKGND_NONE, libtcod.LEFT, message.text)
-        y += 1
-
-    libtcod.console_blit(messages_panel, 0, 0, messages_panel_width, messages_panel_height, 0, messages_panel_x,
-                         messages_panel_y)
+    if global_variables.selected_tile:
+        messages_panel.clear()
+        draw_tile_info(messages_panel,
+                       game_map.tiles[global_variables.selected_tile[0]][global_variables.selected_tile[1]])
+        libtcod.console_blit(messages_panel, 0, 0, messages_panel_width, messages_panel_height, 0, messages_panel_x,
+                             messages_panel_y)
 
     action_panel.clear()
 
@@ -66,9 +67,15 @@ def render_all(colors, additional_render_params, game_state, message_log, action
 
     libtcod.console_blit(action_panel, 0, 0, action_panel_width, action_panel_height, 0, action_panel_x, action_panel_y)
 
-    if MenusRenderingState.ACTIVE_RENDERING_STATE == MenusRenderingOptions.SELECTOR_MENU:
-        selector_menu(con, MenusRenderingState.OPTIONS.get('menu_title'), MenusRenderingState.OPTIONS.get('options'),
-                      50)
+    if global_variables.selected_object:
+        info_panel.clear()
+        draw_object_info(info_panel, global_variables.selected_object.get_object_description())
+        libtcod.console_blit(info_panel, 0, 0, messages_panel_width, messages_panel_height, 0, 0,
+                             game_map.height)
+
+    # if MenusRenderingState.ACTIVE_RENDERING_STATE == MenusRenderingOptions.SELECTOR_MENU:
+    #     selector_menu(con, MenusRenderingState.OPTIONS.get('menu_title'), MenusRenderingState.OPTIONS.get('options'),
+    #                   50)
 
     end_turn_button = libtcod.console_new(10, 3)
     if MenusRenderingState.OPTIONS.get("draw_end_turn_button"):
@@ -77,14 +84,30 @@ def render_all(colors, additional_render_params, game_state, message_log, action
                              screen_height - 3)
 
 
+def draw_object_info(con, options):
+    y = 0
+    for option in options.items():
+        libtcod.console_set_default_foreground(con, libtcod.white)
+        libtcod.console_print_ex(con, 0, y, libtcod.BKGND_NONE, libtcod.LEFT, option[0])
+        global_variables.object_options[y] = option[1]
+        y += 1
+
+
+def draw_tile_info(con, tile):
+    y = 0
+    for item_to_print in tile.get_tile_info_to_print():
+        libtcod.console_set_default_foreground(con, item_to_print[2])
+        libtcod.console_print_ex(con, 0, y, libtcod.BKGND_NONE, libtcod.LEFT, item_to_print[1])
+        global_variables.tile_info_options[y] = item_to_print[0]
+        y += 1
+
+
 def draw_end_turn_button(con):
     for x in range(0, 10):
         for y in range(0, 3):
             libtcod.console_set_char_background(con, x, y, libtcod.Color(250, 250, 0), libtcod.BKGND_SET)
     libtcod.console_set_default_foreground(con, libtcod.black)
     libtcod.console_print_ex(con, 1, 1, libtcod.BKGND_NONE, libtcod.LEFT, 'END TURN')
-
-
 
 
 def draw_selector(con, selector, colors):

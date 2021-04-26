@@ -2,14 +2,14 @@ import tcod as libtcod
 from tcod.console import Console
 
 import global_variables
-from rendering.screen_options import ScreenOptions
+from rendering import screen_options
 
 
 def menu(header, options, width, cancellabe=True):
     if len(options) > 26: raise ValueError('Cannot have a menu with more than 26 options.')
 
     # calculate total height for the header (after auto-wrap) and one line per option
-    header_height = libtcod.console_get_height_rect(global_variables.CONSOLE, 0, 0, width, ScreenOptions.SCREEN_HEIGHT, header)
+    header_height = libtcod.console_get_height_rect(global_variables.CONSOLE, 0, 0, width, screen_options.SCREEN_HEIGHT, header)
     height = len(options) + header_height
     if cancellabe:
         height += 1
@@ -35,8 +35,8 @@ def menu(header, options, width, cancellabe=True):
 
 
     # blit the contents of "window" to the root console
-    x = int(ScreenOptions.SCREEN_WIDTH / 2 - width / 2)
-    y = int(ScreenOptions.SCREEN_HEIGHT / 2 - height / 2)
+    x = int(screen_options.SCREEN_WIDTH / 2 - width / 2)
+    y = int(screen_options.SCREEN_HEIGHT / 2 - height / 2)
     libtcod.console_blit(window, 0, 0, width, height, 0, x, y, 1.0, 0.7)
 
 
