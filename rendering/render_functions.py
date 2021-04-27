@@ -2,6 +2,7 @@ from datetime import datetime
 from enum import Enum
 
 import tcod as libtcod
+from tcod import console_set_default_background
 
 import global_variables
 from global_variables import *
@@ -22,7 +23,7 @@ class MenusRenderingOptions(Enum):
 
 m_panel = libtcod.console_new(PANEL_WIDTH, M_PANEL_HEIGHT)
 a_panel = libtcod.console_new(PANEL_WIDTH, A_PANEL_HEIGHT)
-info_panel = libtcod.console_new(PANEL_WIDTH, A_PANEL_HEIGHT)
+info_panel = libtcod.console_new(SCREEN_WIDTH - PANEL_WIDTH, SCREEN_HEIGHT - MAP_PANEL_HEIGHT)
 
 
 def render_all(colors, game_state, action_panel_messages, messages_panel=m_panel,
@@ -52,6 +53,7 @@ def render_all(colors, game_state, action_panel_messages, messages_panel=m_panel
 
     if global_variables.selected_tile:
         messages_panel.clear()
+        console_set_default_background(messages_panel, libtcod.Color(15, 15, 15))
         draw_tile_info(messages_panel,
                        game_map.tiles[global_variables.selected_tile[0]][global_variables.selected_tile[1]])
         libtcod.console_blit(messages_panel, 0, 0, messages_panel_width, messages_panel_height, 0, messages_panel_x,
@@ -61,17 +63,20 @@ def render_all(colors, game_state, action_panel_messages, messages_panel=m_panel
 
     y = 1
     for message in action_panel_messages:
-        libtcod.console_set_default_foreground(action_panel, libtcod.purple)
+        console_set_default_background(action_panel, libtcod.gray)
+        libtcod.console_set_default_foreground(action_panel, libtcod.white)
         libtcod.console_print_ex(action_panel, 0, y, libtcod.BKGND_NONE, libtcod.LEFT, message)
         y += 1
 
     libtcod.console_blit(action_panel, 0, 0, action_panel_width, action_panel_height, 0, action_panel_x, action_panel_y)
 
+    info_panel.clear()
+    console_set_default_background(info_panel, libtcod.azure)
     if global_variables.selected_object:
-        info_panel.clear()
         draw_object_info(info_panel, global_variables.selected_object.get_object_description())
-        libtcod.console_blit(info_panel, 0, 0, messages_panel_width, messages_panel_height, 0, 0,
-                             game_map.height)
+
+    libtcod.console_blit(info_panel, 0, 0, SCREEN_WIDTH - PANEL_WIDTH, SCREEN_HEIGHT - MAP_PANEL_HEIGHT, 0, 0,
+                         MAP_PANEL_HEIGHT)
 
     # if MenusRenderingState.ACTIVE_RENDERING_STATE == MenusRenderingOptions.SELECTOR_MENU:
     #     selector_menu(con, MenusRenderingState.OPTIONS.get('menu_title'), MenusRenderingState.OPTIONS.get('options'),

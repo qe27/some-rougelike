@@ -4,7 +4,7 @@ from rendering.screen_options import *
 
 
 def handle_mouse(mouse):
-    if 0 <= mouse.cx <= SCREEN_WIDTH - PANEL_WIDTH and 0 <= mouse.cy <= map_height:
+    if 0 <= mouse.cx < SCREEN_WIDTH - PANEL_WIDTH and 0 <= mouse.cy < MAP_PANEL_HEIGHT:
         print('mouse x: %d         mouse y: %d' % (mouse.cx, mouse.cy))
         global_variables.selected_tile = (mouse.cx, mouse.cy)
     elif SCREEN_WIDTH - 10 <= mouse.cx <= SCREEN_WIDTH and \
@@ -16,3 +16,6 @@ def handle_mouse(mouse):
         if global_variables.tile_info_options[selected_option]:
             print('selected option: ' + global_variables.tile_info_options[selected_option].name)
             global_variables.selected_object = global_variables.tile_info_options[selected_option]
+    elif MAP_PANEL_HEIGHT <= mouse.cy <= SCREEN_HEIGHT:
+        if global_variables.object_options.get(mouse.cy - MAP_PANEL_HEIGHT):
+            global_variables.object_options[mouse.cy - MAP_PANEL_HEIGHT]()
