@@ -1,18 +1,18 @@
-import tcod
-
 from map_objects import random_map_generator
-from map_objects.tile import Tile
-from objects.game_objects.landscape.plain import Plain
-from objects.game_objects.landscape.river import River
-from objects.game_objects.map_object import MapObject
+from map_objects.map_types import *
+from map_objects.tile_objects.tile import Tile
+from objects.game_objects.world_map.landscape import Plain
+from objects.game_objects.world_map.landscape import River
+from objects.game_objects.world_map.settlement import Settlement
 
 
-class WorldMap:
+class Map:
 
-    def __init__(self, width, height):
+    def __init__(self, width, height, map_type=WORLD_MAP):
         self.width = width
         self.height = height
         self.tiles = self.initialize_tiles()
+        self.map_type = map_type
         self.make_map()
 
     def initialize_tiles(self):
@@ -25,9 +25,9 @@ class WorldMap:
         for x in range(self.width):
             for y in range(self.height):
                 if generated_map.n[x + 1][y + 1] > 0.3:
-                    self.tiles[x][y].tile_structure.set_landscape({Plain(): 1})
-                else:
-                    self.tiles[x][y].tile_structure.set_landscape({River(): 1})
+                    self.tiles[x][y].tile_object = Settlement()
+                # else:
+                #     self.tiles[x][y].tile_object.set_landscape({River(): 1})
                 # if (x == 10) or (y == 15):
                 #     self.tiles[x][y].tile_structure.set_landscape({River(): 0.6, Plain(): 0.4})
 

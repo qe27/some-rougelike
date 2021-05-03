@@ -2,7 +2,7 @@ import tcod as libtcod
 
 import global_variables
 from global_variables import *
-from map_objects.game_map import WorldMap
+from map_objects.game_map import Map
 from map_objects.map_manager import MapManager
 from rendering.render_functions import render_all, clear_all
 from rendering.screen_options import *
@@ -43,7 +43,7 @@ def main():
 
     global_variables.CONSOLE = libtcod.console_new(SCREEN_WIDTH, SCREEN_HEIGHT)
 
-    MapManager.map = WorldMap(map_width, map_height)
+    MapManager.map = Map(map_width, map_height)
     # MapManager.map.make_map()
 
     additional_render_params = {}

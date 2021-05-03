@@ -34,7 +34,7 @@ def handle(key_action, tile):
         selected_resource_type = available_resource_types[selected_option]
         created_source = create_resource_source(selected_terrain, selected_resource_type)
         print('Created resource source with type :' + created_source.resource_type + 'on tile : ' +
-              str(created_source.terrain.tile_structure.tile.x) + ',' + str(created_source.terrain.tile_structure.tile.y))
+              str(created_source.terrain.tile_object.tile.x) + ',' + str(created_source.terrain.tile_object.tile.y))
 
 
 def handle_create(key_action, tile):
@@ -46,15 +46,15 @@ def handle_create(key_action, tile):
     key_0 = key_action.get('key_0')
 
     if SelectedOptions.options.get('selected_terrain_object') \
-            and SelectedOptions.options.get('selected_terrain_object').tile_structure.tile != tile:
-        if len(tile.tile_structure.terrain) == 1:
-            SelectedOptions.options['selected_terrain_object'] = list(tile.tile_structure.terrain.keys())[0]
+            and SelectedOptions.options.get('selected_terrain_object').tile_object.tile != tile:
+        if len(tile.tile_object.terrain) == 1:
+            SelectedOptions.options['selected_terrain_object'] = list(tile.tile_object.terrain.keys())[0]
         else:
             SelectedOptions.options['selected_terrain_object'] = None
 
-    if SelectedOptions.options.get('selected_terrain_object') is None and len(tile.tile_structure.terrain) == 1:
-        if len(tile.tile_structure.terrain) == 1:
-            SelectedOptions.options['selected_terrain_object'] = list(tile.tile_structure.terrain.keys())[0]
+    if SelectedOptions.options.get('selected_terrain_object') is None and len(tile.tile_object.terrain) == 1:
+        if len(tile.tile_object.terrain) == 1:
+            SelectedOptions.options['selected_terrain_object'] = list(tile.tile_object.terrain.keys())[0]
 
     if key_3:
         terrain = tile.get_terrain_objects()
@@ -66,7 +66,7 @@ def handle_create(key_action, tile):
 
     if key_9:
         # add validation
-        create_map_object(tile.tile_structure, SelectedOptions.options)
+        create_map_object(tile.tile_object, SelectedOptions.options)
     if key_0:
         CurrentActiveState.ACTIVE_STATE = ActiveStates.DEBUG
     if key_2:
