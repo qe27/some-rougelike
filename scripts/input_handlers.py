@@ -1,17 +1,26 @@
 import tcod as libtcod
-from scripts.game_states import GameStates
+
+from scripts.engine.active_state import *
 
 
 def handle_keys(key, game_state):
-    if game_state == GameStates.IN_PROGRESS:
-        return handle_in_progress_keys(key)
-    elif game_state == GameStates.PAUSED:
-        return handle_paused_keys(key)
+    if game_state == ActiveStates.WORLD_MAP:
+        return handle_world_map_keys(key)
     return {}
 
 
-def handle_paused_keys(key):
+def handle_world_map_keys(key):
     key_char = chr(key.c)
+
+    if key.lctrl:
+        if key.vk == libtcod.KEY_UP:
+            return {'offset_move': (0, -1)}
+        elif key.vk == libtcod.KEY_DOWN:
+            return {'offset_move': (0, 1)}
+        elif key.vk == libtcod.KEY_LEFT:
+            return {'offset_move': (-1, 0)}
+        elif key.vk == libtcod.KEY_RIGHT:
+            return {'offset_move': (1, 0)}
 
     if key.vk == libtcod.KEY_UP:
         return {'selector_move': (0, -1)}

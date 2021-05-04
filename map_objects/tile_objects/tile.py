@@ -1,4 +1,4 @@
-from map_objects.map_manager import MapManager
+import global_variables
 from map_objects.map_types import *
 from objects.game_objects.world_map.landscape.open_sea import OpenSea
 
@@ -8,7 +8,7 @@ class Tile:
     A tile on a map. It contains objects.
     """
 
-    def __init__(self, game_map=MapManager.map, x=None, y=None, tile_object=None):
+    def __init__(self, game_map=global_variables.world_map, x=None, y=None, tile_object=None):
         """
         TODO: support list of objects
         """

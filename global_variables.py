@@ -1,7 +1,9 @@
 CONSOLE = None
+world_map_offset = (0, 0)
 selected_tile = (0, 0)
 selected_object = None
 tile_info_options = {}
 object_options = {}
-map_width = 80
-map_height = 45
+map_width = 200
+map_height = 100
+world_map = None

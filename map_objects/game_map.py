@@ -1,8 +1,6 @@
 from map_objects import random_map_generator
 from map_objects.map_types import *
 from map_objects.tile_objects.tile import Tile
-from objects.game_objects.world_map.landscape import Plain
-from objects.game_objects.world_map.landscape import River
 from objects.game_objects.world_map.settlement import Settlement
 
 
@@ -11,8 +9,8 @@ class Map:
     def __init__(self, width, height, map_type=WORLD_MAP):
         self.width = width
         self.height = height
-        self.tiles = self.initialize_tiles()
         self.map_type = map_type
+        self.tiles = self.initialize_tiles()
         self.make_map()
 
     def initialize_tiles(self):
