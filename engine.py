@@ -71,9 +71,26 @@ def main():
 
         if offset_move:
             global_variables.world_map_offset = tuple(map(operator.add, global_variables.world_map_offset, offset_move))
+            if global_variables.world_map_offset[0] < 0:
+                global_variables.world_map_offset = (0, global_variables.world_map_offset[1])
+            if global_variables.world_map_offset[1] < 0:
+                global_variables.world_map_offset = (global_variables.world_map_offset[0], 0)
+            if global_variables.world_map_offset[0] > map_width - MAIN_PANEL_WIDTH:
+                global_variables.world_map_offset = (max(map_width - MAIN_PANEL_WIDTH, 0), global_variables.world_map_offset[1])
+            if global_variables.world_map_offset[1] > map_height - MAIN_PANEL_HEIGHT:
+                global_variables.world_map_offset = (global_variables.world_map_offset[0], max(map_height - MAIN_PANEL_HEIGHT, 0))
+
 
         if selector_move:
             global_variables.selected_tile = tuple(map(operator.add, global_variables.selected_tile, selector_move))
+            if global_variables.selected_tile[0] < 0:
+                global_variables.selected_tile = (0, global_variables.selected_tile[1])
+            if global_variables.selected_tile[1] < 0:
+                global_variables.selected_tile = (global_variables.selected_tile[0], 0)
+            if global_variables.selected_tile[0] >= map_width:
+                global_variables.selected_tile = (map_width - 1, global_variables.selected_tile[1])
+            if global_variables.selected_tile[1] >= map_height:
+                global_variables.selected_tile = (global_variables.selected_tile[0], map_height-1)
 
         clear_all(global_variables.CONSOLE, global_variables.world_map)
 
