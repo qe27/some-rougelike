@@ -4,9 +4,10 @@ from rendering.screen_options import *
 
 
 def handle_mouse(mouse):
+    current_map = global_variables.get_current_map()
     if 0 <= mouse.cx < SCREEN_WIDTH - PANEL_WIDTH and 0 <= mouse.cy < MAIN_PANEL_HEIGHT:
         print('mouse x: %d         mouse y: %d' % (mouse.cx, mouse.cy))
-        global_variables.selected_tile = (mouse.cx + world_map_offset[0], mouse.cy + world_map_offset[1])
+        current_map.selected_tile = (mouse.cx + map_offset[0], mouse.cy + map_offset[1])
     elif SCREEN_WIDTH - 10 <= mouse.cx <= SCREEN_WIDTH and \
             SCREEN_HEIGHT - 3 <= mouse.cy <= SCREEN_HEIGHT:
         print('pressed end turn button!!!')

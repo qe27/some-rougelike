@@ -8,11 +8,12 @@ class Tile:
     A tile on a map. It contains objects.
     """
 
-    def __init__(self, game_map=global_variables.world_map, x=None, y=None, tile_object=None):
+    def __init__(self, upper_map, x=None, y=None, tile_object=None, lower_map=None):
         """
         TODO: support list of objects
         """
-        self.game_map = game_map
+        self.upper_map = upper_map
+        self.lower_map = lower_map
         self.x = x
         self.y = y
         # self.exists = exists
@@ -20,7 +21,9 @@ class Tile:
         if tile_object:
             self.tile_object = tile_object
         else:
-            if self.game_map.map_type == WORLD_MAP:
+            if self.upper_map.map_type == WORLD_MAP:
+                self.tile_object = OpenSea()
+            elif self.upper_map.map_type == LOCATION_MAP:
                 self.tile_object = OpenSea()
         self.tile_object.tile = self
 

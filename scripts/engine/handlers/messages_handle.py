@@ -5,7 +5,7 @@ from scripts.engine.handlers.key_handlers.selected_options import SelectedOption
 
 def get_action_messages():
     active_state = CurrentActiveState.ACTIVE_STATE
-    if active_state == ActiveStates.WORLD_MAP:
+    if active_state in [ActiveStates.WORLD_MAP, ActiveStates.LOCATION_MAP]:
         return ['No Messages!']
     elif active_state == ActiveStates.DEBUG_CREATE:
         object_type = SelectedOptions.options.get('map_object_type')

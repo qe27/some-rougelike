@@ -9,6 +9,7 @@ from global_variables import *
 from rendering.menus import selector_menu
 from rendering.screen_options import *
 from scripts.engine.active_state import ActiveStates
+from scripts.engine.handlers import options_manager
 from scripts.game_states import GameStates
 
 
@@ -33,8 +34,9 @@ def render_all(colors, game_state, action_panel_messages, messages_panel=m_panel
                messages_panel_x=SCREEN_WIDTH - PANEL_WIDTH,
                messages_panel_y=A_PANEL_HEIGHT,
                messages_panel_width=PANEL_WIDTH, messages_panel_height=M_PANEL_HEIGHT,
-               con=global_variables.CONSOLE, game_map=global_variables.world_map, screen_width=SCREEN_WIDTH,
+               con=global_variables.CONSOLE, screen_width=SCREEN_WIDTH,
                screen_height=SCREEN_HEIGHT):
+    game_map = global_variables.get_current_map()
     if game_state == ActiveStates.WORLD_MAP:
         # Draw all the tiles in the game map
         for y in range(min(game_map.height, MAIN_PANEL_HEIGHT)):
@@ -44,17 +46,17 @@ def render_all(colors, game_state, action_panel_messages, messages_panel=m_panel
                 #     libtcod.console_set_char_background(con, x, y, colors.get('dark_ground'), libtcod.BKGND_SET)
                 # else:
                 #     libtcod.console_set_char_background(con, x, y, colors.get('dark_wall'), libtcod.BKGND_SET)
-                draw_objects(con, game_map.tiles[x + global_variables.world_map_offset[0]][y + global_variables.world_map_offset[1]])
-        if global_variables.selected_tile:
-            draw_selector(con, global_variables.selected_tile, colors)
+                draw_objects(con, game_map, game_map.tiles[x + game_map.map_offset[0]][y + game_map.map_offset[1]])
+        if game_map.selected_tile:
+            draw_selector(con, game_map.selected_tile, colors, game_map)
 
     libtcod.console_blit(con, 0, 0, screen_width, screen_height, 0, 0, 0)
 
-    if global_variables.selected_tile:
+    if game_map.selected_tile:
         messages_panel.clear()
         console_set_default_background(messages_panel, libtcod.Color(15, 15, 15))
         draw_tile_info(messages_panel,
-                       game_map.tiles[global_variables.selected_tile[0]][global_variables.selected_tile[1]])
+                       game_map.tiles[game_map.selected_tile[0]][game_map.selected_tile[1]])
         libtcod.console_blit(messages_panel, 0, 0, messages_panel_width, messages_panel_height, 0, messages_panel_x,
                              messages_panel_y)
 
@@ -71,8 +73,8 @@ def render_all(colors, game_state, action_panel_messages, messages_panel=m_panel
 
     info_panel.clear()
     console_set_default_background(info_panel, libtcod.azure)
-    if global_variables.selected_object:
-        draw_object_info(info_panel, global_variables.selected_object.get_object_description())
+    if game_map.selected_tile:
+        draw_object_info(info_panel)
 
     libtcod.console_blit(info_panel, 0, 0, SCREEN_WIDTH - PANEL_WIDTH, SCREEN_HEIGHT - MAIN_PANEL_HEIGHT, 0, 0,
                          MAIN_PANEL_HEIGHT)
@@ -88,14 +90,14 @@ def render_all(colors, game_state, action_panel_messages, messages_panel=m_panel
                              screen_height - 3)
 
 
-def draw_object_info(con, options):
-    return
-    # y = 0
-    # for option in options.items():
-    #     libtcod.console_set_default_foreground(con, libtcod.white)
-    #     libtcod.console_print_ex(con, 0, y, libtcod.BKGND_NONE, libtcod.LEFT, option[0])
-    #     global_variables.object_options[y] = option[1]
-    #     y += 1
+def draw_object_info(con):
+    # return
+    y = 0
+    for option in options_manager.get_available_options().items():
+        libtcod.console_set_default_foreground(con, libtcod.white)
+        libtcod.console_print_ex(con, 0, y, libtcod.BKGND_NONE, libtcod.LEFT, option[0])
+        global_variables.object_options[y] = option[1]
+        y += 1
 
 
 def draw_tile_info(con, tile):
@@ -116,24 +118,25 @@ def draw_end_turn_button(con):
     libtcod.console_print_ex(con, 1, 1, libtcod.BKGND_NONE, libtcod.LEFT, 'END TURN')
 
 
-def draw_selector(con, selector, colors):
+def draw_selector(con, selector, colors, current_map):
     # curr_time = datetime.now()
     if int(datetime.now().strftime('%S')) % 2 == 0:
-        libtcod.console_set_char_background(con, selector[0]-global_variables.world_map_offset[0], selector[1]-global_variables.world_map_offset[1], colors.get('yellow'), libtcod.BKGND_SET)
-        libtcod.console_put_char(con, selector[0]-global_variables.world_map_offset[0], selector[1]-global_variables.world_map_offset[1], 'X', libtcod.COLOR_RED)
+        libtcod.console_set_char_background(con, selector[0] - current_map.map_offset[0], selector[1] - current_map.map_offset[1], colors.get('yellow'), libtcod.BKGND_SET)
+        libtcod.console_put_char(con, selector[0] - current_map.map_offset[0], selector[1] - current_map.map_offset[1], 'X', libtcod.COLOR_RED)
 
 
-def clear_all(con, game_map):
-    for y in range(min(game_map.height, MAIN_PANEL_HEIGHT)):
-        for x in range(min(game_map.width, MAIN_PANEL_WIDTH)):
-            clear_entity(con, game_map.tiles[x + global_variables.world_map_offset[0]][y + global_variables.world_map_offset[1]])
+def clear_all(con):
+    current_map = global_variables.get_current_map()
+    for y in range(min(current_map.height, MAIN_PANEL_HEIGHT)):
+        for x in range(min(current_map.width, MAIN_PANEL_WIDTH)):
+            clear_entity(con, current_map, current_map.tiles[x + current_map.map_offset[0]][y + current_map.map_offset[1]])
 
 
-def draw_objects(con, tile):
+def draw_objects(con, current_map, tile):
     libtcod.console_set_default_foreground(con, tile.get_color())
-    libtcod.console_put_char(con, tile.x - global_variables.world_map_offset[0], tile.y - global_variables.world_map_offset[1], tile.get_char(), libtcod.BKGND_NONE)
+    libtcod.console_put_char(con, tile.x - current_map.map_offset[0], tile.y - current_map.map_offset[1], tile.get_char(), libtcod.BKGND_NONE)
 
 
-def clear_entity(con, tile):
+def clear_entity(con, current_map, tile):
     # erase the character that represents this object
-    libtcod.console_put_char(con, tile.x - global_variables.world_map_offset[0], tile.y - global_variables.world_map_offset[1], ' ', libtcod.BKGND_NONE)
+    libtcod.console_put_char(con, tile.x - current_map.map_offset[0], tile.y - current_map.map_offset[1], ' ', libtcod.BKGND_NONE)

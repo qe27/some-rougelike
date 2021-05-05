@@ -42,7 +42,7 @@ def main():
 
     global_variables.CONSOLE = libtcod.console_new(SCREEN_WIDTH, SCREEN_HEIGHT)
 
-    global_variables.world_map = Map(map_width, map_height)
+    global_variables.game_map = Map(map_width, map_height)
     # MapManager.map.make_map()
 
     additional_render_params = {}
@@ -56,7 +56,7 @@ def main():
 
     while not libtcod.console_is_window_closed():
         libtcod.sys_check_for_event(libtcod.EVENT_KEY_PRESS | libtcod.EVENT_MOUSE, key, mouse)
-        render_all(colors, game_state, action_panel_messages, game_map=global_variables.world_map)
+        render_all(colors, game_state, action_panel_messages)
         libtcod.console_flush()
 
         action_panel_messages = get_action_messages()
@@ -69,33 +69,35 @@ def main():
         if mouse.lbutton_pressed:
             handle_mouse(mouse)
 
+        current_map = get_current_map()
+
         if offset_move:
-            global_variables.world_map_offset = tuple(map(operator.add, global_variables.world_map_offset, offset_move))
-            if global_variables.world_map_offset[0] < 0:
-                global_variables.world_map_offset = (0, global_variables.world_map_offset[1])
-            if global_variables.world_map_offset[1] < 0:
-                global_variables.world_map_offset = (global_variables.world_map_offset[0], 0)
-            if global_variables.world_map_offset[0] > map_width - MAIN_PANEL_WIDTH:
-                global_variables.world_map_offset = (max(map_width - MAIN_PANEL_WIDTH, 0), global_variables.world_map_offset[1])
-            if global_variables.world_map_offset[1] > map_height - MAIN_PANEL_HEIGHT:
-                global_variables.world_map_offset = (global_variables.world_map_offset[0], max(map_height - MAIN_PANEL_HEIGHT, 0))
+            current_map.map_offset = tuple(map(operator.add, current_map.map_offset, offset_move))
+            if current_map.map_offset[0] < 0:
+                current_map.map_offset = (0, current_map.map_offset[1])
+            if current_map.map_offset[1] < 0:
+                current_map.map_offset = (current_map.map_offset[0], 0)
+            if current_map.map_offset[0] > current_map.width - MAIN_PANEL_WIDTH:
+                current_map.map_offset = (max(current_map.width - MAIN_PANEL_WIDTH, 0), current_map.map_offset[1])
+            if current_map.map_offset[1] > current_map.height - MAIN_PANEL_HEIGHT:
+                current_map.map_offset = (current_map.map_offset[0], max(current_map.height - MAIN_PANEL_HEIGHT, 0))
 
 
         if selector_move:
-            global_variables.selected_tile = tuple(map(operator.add, global_variables.selected_tile, selector_move))
-            if global_variables.selected_tile[0] < 0:
-                global_variables.selected_tile = (0, global_variables.selected_tile[1])
-            if global_variables.selected_tile[1] < 0:
-                global_variables.selected_tile = (global_variables.selected_tile[0], 0)
-            if global_variables.selected_tile[0] >= map_width:
-                global_variables.selected_tile = (map_width - 1, global_variables.selected_tile[1])
-            if global_variables.selected_tile[1] >= map_height:
-                global_variables.selected_tile = (global_variables.selected_tile[0], map_height-1)
+            current_map.selected_tile = tuple(map(operator.add, current_map.selected_tile, selector_move))
+            if current_map.selected_tile[0] < 0:
+                current_map.selected_tile = (0, current_map.selected_tile[1])
+            if current_map.selected_tile[1] < 0:
+                current_map.selected_tile = (current_map.selected_tile[0], 0)
+            if current_map.selected_tile[0] >= current_map.width:
+                current_map.selected_tile = (current_map.width - 1, current_map.selected_tile[1])
+            if current_map.selected_tile[1] >= current_map.height:
+                current_map.selected_tile = (current_map.selected_tile[0], current_map.height-1)
 
-        clear_all(global_variables.CONSOLE, global_variables.world_map)
+        clear_all(global_variables.CONSOLE)
 
         # if debug:
-        #     handle_debug(global_variables.world_map.tiles[global_variables.selected_tile[0]][global_variables.selected_tile[1]], action_panel_messages, key_action)
+        #     handle_debug(current_map.tiles[current_map.selected_tile[0]][current_map.selected_tile[1]], action_panel_messages, key_action)
 
 
 if __name__ == '__main__':
