@@ -3,6 +3,8 @@ import tcod as libtcod
 import global_variables
 from global_variables import *
 from map_objects.game_map import Map
+
+from objects.game_objects.prepared_objects import ships_map
 from rendering.render_functions import render_all, clear_all
 from rendering.screen_options import *
 from scripts.engine.active_state import ActiveStates
@@ -50,6 +52,7 @@ def main():
     key = libtcod.Key()
     mouse = libtcod.Mouse()
     # selected_tile = (0, 0)
+    print(str(ships_map))
 
     message_log = MessageLog(message_x, message_width, message_height)
     action_panel_messages = []

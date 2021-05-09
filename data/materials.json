@@ -1,0 +1,18 @@
+{
+  "Wood": {
+    "name": "Wood",
+    "adj": "Wooden",
+    "flammable": true,
+    "durability": 1000,
+    "density": 600,
+    "color": "brown"
+  },
+  "Stone": {
+    "name": "Stone",
+    "adj": "Stone",
+    "flammable": false,
+    "durability": 10000,
+    "density": 2000,
+    "color": "gray"
+  }
+}

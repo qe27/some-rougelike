@@ -1,0 +1,10 @@
+{
+  "materials": {
+    "w": "Wood",
+    "s": "Stone"
+  },
+  "tile_types": {
+    "W": "Wall",
+    "F": "Floor"
+  }
+}

@@ -1,0 +1,14 @@
+{
+    "Wall": {
+        "name": "Wall",
+        "durability": 100,
+        "passable": false,
+        "character": "w"
+    },
+    "Floor": {
+        "name": "Wall",
+        "durability": 30,
+        "passable": true,
+        "character": "."
+    }
+}
