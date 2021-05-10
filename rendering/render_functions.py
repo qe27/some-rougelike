@@ -26,8 +26,21 @@ m_panel = libtcod.console_new(PANEL_WIDTH, M_PANEL_HEIGHT)
 a_panel = libtcod.console_new(PANEL_WIDTH, A_PANEL_HEIGHT)
 info_panel = libtcod.console_new(SCREEN_WIDTH - PANEL_WIDTH, SCREEN_HEIGHT - MAIN_PANEL_HEIGHT)
 
+colors = {
+        'dark_wall': libtcod.Color(0, 0, 100),
+        'dark_ground': libtcod.Color(50, 50, 150),
+        'white': libtcod.Color(250, 250, 250),
+        'yellow': libtcod.Color(250, 250, 0),
+        'gray': libtcod.gray,
+        'brown': libtcod.Color(70, 20, 20)
+    }
 
-def render_all(colors, game_state, action_panel_messages, messages_panel=m_panel,
+opposite_colors = {
+    'gray': libtcod.white,
+    'brown': libtcod.white
+}
+
+def render_all(game_state, action_panel_messages, messages_panel=m_panel,
                action_panel=a_panel, action_panel_x=SCREEN_WIDTH - PANEL_WIDTH,
                action_panel_y=0, action_panel_width=PANEL_WIDTH,
                action_panel_height=A_PANEL_HEIGHT,
@@ -49,6 +62,21 @@ def render_all(colors, game_state, action_panel_messages, messages_panel=m_panel
                 draw_objects(con, game_map, game_map.tiles[x + game_map.map_offset[0]][y + game_map.map_offset[1]])
         if game_map.selected_tile:
             draw_selector(con, game_map.selected_tile, colors, game_map)
+
+    elif game_state == ActiveStates.SHIP_MAP:
+        # Draw selected ship layer
+        ship = global_variables.player.ship
+        layer_to_render = ship.model.get(global_variables.selected_ship_layer)
+        for y in range(min(len(layer_to_render.tiles), MAIN_PANEL_HEIGHT)):
+            for x in range(min(len(layer_to_render.tiles[y]), MAIN_PANEL_WIDTH)):
+                tile = layer_to_render.tiles[y][x]
+                if tile.type and tile.material:
+                    libtcod.console_set_char_background(con, x, y, colors.get(tile.material.get('color')), libtcod.BKGND_SET)
+                    libtcod.console_set_default_foreground(con, opposite_colors.get(tile.material.get('color')))
+                    libtcod.console_put_char(con, x, y, tile.type.get('character'), libtcod.BKGND_DEFAULT)
+                else:
+                    libtcod.console_set_char_background(con, x, y, libtcod.azure, libtcod.BKGND_SET)
+                    libtcod.console_put_char(con, x, y, ' ', libtcod.BKGND_DEFAULT)
 
     libtcod.console_blit(con, 0, 0, screen_width, screen_height, 0, 0, 0)
 
@@ -125,11 +153,14 @@ def draw_selector(con, selector, colors, current_map):
         libtcod.console_put_char(con, selector[0] - current_map.map_offset[0], selector[1] - current_map.map_offset[1], 'X', libtcod.COLOR_RED)
 
 
-def clear_all(con):
+def clear_all(con, game_state):
     current_map = global_variables.get_current_map()
     for y in range(min(current_map.height, MAIN_PANEL_HEIGHT)):
         for x in range(min(current_map.width, MAIN_PANEL_WIDTH)):
-            clear_entity(con, current_map, current_map.tiles[x + current_map.map_offset[0]][y + current_map.map_offset[1]])
+            if game_state == ActiveStates.WORLD_MAP:
+                clear_entity(con, current_map, current_map.tiles[x + current_map.map_offset[0]][y + current_map.map_offset[1]])
+            elif game_state == ActiveStates.SHIP_MAP:
+                libtcod.console_put_char(con, x, y, ' ', libtcod.BKGND_NONE)
 
 
 def draw_objects(con, current_map, tile):

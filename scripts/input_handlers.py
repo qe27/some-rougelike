@@ -4,7 +4,7 @@ from scripts.engine.active_state import *
 
 
 def handle_keys(key, game_state):
-    if game_state == ActiveStates.WORLD_MAP:
+    if game_state == ActiveStates.WORLD_MAP or game_state == ActiveStates.SHIP_MAP:
         return handle_world_map_keys(key)
     return {}
 

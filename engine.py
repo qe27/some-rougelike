@@ -3,8 +3,9 @@ import tcod as libtcod
 import global_variables
 from global_variables import *
 from map_objects.game_map import Map
+from objects.game_objects.player import Player
 
-from objects.game_objects.prepared_objects import ships_map
+from objects.game_objects.prepared_objects import ships
 from rendering.render_functions import render_all, clear_all
 from rendering.screen_options import *
 from scripts.engine.active_state import ActiveStates
@@ -22,21 +23,13 @@ import operator
 def main():
     global map_width
     global map_height
-    game_state = ActiveStates.WORLD_MAP
     debug = True
-    CurrentActiveState.ACTIVE_STATE = ActiveStates.WORLD_MAP
+    CurrentActiveState.ACTIVE_STATE = ActiveStates.SHIP_MAP
 
     bar_width = 20
     message_x = bar_width + 2
     message_width = SCREEN_WIDTH - bar_width - 2
     message_height = M_PANEL_HEIGHT - 1
-
-    colors = {
-        'dark_wall': libtcod.Color(0, 0, 100),
-        'dark_ground': libtcod.Color(50, 50, 150),
-        'white': libtcod.Color(250, 250, 250),
-        'yellow': libtcod.Color(250, 250, 0)
-    }
 
     libtcod.console_set_custom_font('arial10x10.png', libtcod.FONT_TYPE_GREYSCALE | libtcod.FONT_LAYOUT_TCOD)
 
@@ -45,6 +38,8 @@ def main():
     global_variables.CONSOLE = libtcod.console_new(SCREEN_WIDTH, SCREEN_HEIGHT)
 
     global_variables.game_map = Map(map_width, map_height)
+    global_variables.player = Player()
+    global_variables.player.ship = ships[0]
     # MapManager.map.make_map()
 
     additional_render_params = {}
@@ -52,18 +47,18 @@ def main():
     key = libtcod.Key()
     mouse = libtcod.Mouse()
     # selected_tile = (0, 0)
-    print(str(ships_map))
+    # print(str(ships_map))
 
     message_log = MessageLog(message_x, message_width, message_height)
     action_panel_messages = []
 
     while not libtcod.console_is_window_closed():
         libtcod.sys_check_for_event(libtcod.EVENT_KEY_PRESS | libtcod.EVENT_MOUSE, key, mouse)
-        render_all(colors, game_state, action_panel_messages)
+        render_all(CurrentActiveState.ACTIVE_STATE, action_panel_messages)
         libtcod.console_flush()
 
-        action_panel_messages = get_action_messages()
-        key_action = handle_keys(key, game_state)
+        # action_panel_messages = get_action_messages()
+        key_action = handle_keys(key, CurrentActiveState.ACTIVE_STATE)
         selector_move = key_action.get('selector_move')
         offset_move = key_action.get('offset_move')
         # selector_move = key_action.get('key_1')
@@ -97,7 +92,12 @@ def main():
             if current_map.selected_tile[1] >= current_map.height:
                 current_map.selected_tile = (current_map.selected_tile[0], current_map.height-1)
 
-        clear_all(global_variables.CONSOLE)
+        if key_action.get('key_0'):
+            global_variables.selected_ship_layer = 0
+        if key_action.get('key_1'):
+            global_variables.selected_ship_layer = 1
+
+        clear_all(global_variables.CONSOLE, CurrentActiveState.ACTIVE_STATE)
 
         # if debug:
         #     handle_debug(current_map.tiles[current_map.selected_tile[0]][current_map.selected_tile[1]], action_panel_messages, key_action)

@@ -2,6 +2,7 @@ import json
 import os
 
 from objects.game_objects.ship.ship_layer_model import ShipLayer
+from objects.game_objects.ship.ship_model import Ship
 from objects.game_objects.ship.ship_tile import ShipTile
 
 
@@ -18,9 +19,10 @@ def load_tile_types():
 def load_ships():
     with open('data/notations.json') as json_file:
         notations = json.load(json_file)
-    result = {}
+    result = []
     i = 0
     for file in os.listdir('data/prepared_objects/ships'):
+        current_model = {}
         with open('data/prepared_objects/ships/' + file) as ship_file:
             lines = ship_file.readlines()
             current_layer = []
@@ -28,7 +30,8 @@ def load_ships():
                 ship_line = []
                 if bool(line.isspace()) or line == 'end':
                     layer = ShipLayer(current_layer)
-                    result[i] = layer
+                    current_model[i] = layer
+                    result.append(Ship(100, 100, current_model))
                     current_layer = []
                     i = + 1
                     continue
@@ -52,4 +55,4 @@ def load_ships():
 
 materials_map = load_materials()
 tile_types_map = load_tile_types()
-ships_map = load_ships()
+ships = load_ships()
