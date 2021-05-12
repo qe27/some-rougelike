@@ -50,7 +50,7 @@ def render_all(game_state, action_panel_messages, messages_panel=m_panel,
                con=global_variables.CONSOLE, screen_width=SCREEN_WIDTH,
                screen_height=SCREEN_HEIGHT):
     game_map = global_variables.get_current_map()
-    if game_state == ActiveStates.WORLD_MAP:
+    if game_state == ActiveStates.WORLD_MAP or game_state == ActiveStates.LOCATION_MAP:
         # Draw all the tiles in the game map
         for y in range(min(game_map.height, MAIN_PANEL_HEIGHT)):
             for x in range(min(game_map.width, MAIN_PANEL_WIDTH)):

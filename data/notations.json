@@ -5,6 +5,7 @@
   },
   "tile_types": {
     "W": "Wall",
-    "F": "Floor"
+    "F": "Floor",
+    "X": "Stairs"
   }
 }
