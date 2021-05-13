@@ -26,12 +26,12 @@ class Map:
             for x in range(self.width):
                 for y in range(self.height):
                     if generated_map.n[x + 1][y + 1] > 0.3:
-                        self.tiles[x][y].tile_object = Settlement()
+                        self.tiles[x][y].landscape = Settlement()
         if self.map_type == LOCATION_MAP:
             for x in range(self.width):
                 for y in range(self.height):
                     if x % 2 and y % 3:
-                        self.tiles[x][y].tile_object = Settlement()
+                        self.tiles[x][y].landscape = Settlement()
             # if self.parent_type=
             # else:
             #     self.tiles[x][y].tile_object.set_landscape({River(): 1})

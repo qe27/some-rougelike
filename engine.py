@@ -43,6 +43,7 @@ def main():
     global_variables.game_map = Map(map_width, map_height)
     global_variables.player = Player()
     global_variables.player.ship = ships[0]
+    global_variables.player.ship.set_tile(global_variables.game_map.tiles[0][0])
     # MapManager.map.make_map()
 
     additional_render_params = {}

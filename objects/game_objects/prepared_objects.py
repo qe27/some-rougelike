@@ -1,6 +1,7 @@
 import json
 import os
 
+import global_variables
 from objects.game_objects.ship.ship_layer_model import ShipLayer
 from objects.game_objects.ship.ship_model import Ship
 from objects.game_objects.ship.ship_tile import ShipTile
@@ -31,7 +32,7 @@ def load_ships():
                 if bool(line.isspace()) or line == 'end':
                     layer = ShipLayer(current_layer)
                     current_model[i] = layer
-                    result.append(Ship(100, 100, current_model, 10))
+                    result.append(Ship(100, 100, current_model, 0.3))
                     current_layer = []
                     i = + 1
                     continue
