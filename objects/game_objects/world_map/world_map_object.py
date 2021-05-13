@@ -22,5 +22,8 @@ class WorldMapObject:
         self.char = char
         self.tile = None
 
-    def get_funcs(self):
+    def get_object_funcs(self):
         return {'Go to': self.go_to, 'Get Description': self.get_description}
+
+    def get_subject_funcs(self):
+        return {}

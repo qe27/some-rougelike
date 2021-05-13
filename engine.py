@@ -1,3 +1,4 @@
+import copy
 from datetime import datetime
 import tcod as libtcod
 
@@ -16,10 +17,11 @@ from scripts.engine.executor import Executor
 from scripts.engine.game_messages import MessageLog
 from scripts.engine.handlers.debug_handler import handle_debug
 from scripts.engine.handlers.key_handlers.selected_options import SelectedOptions
+from scripts.engine.handlers.main_keyboard_handler import handle_keys
 from scripts.engine.handlers.main_mouse_handler import handle_mouse
 from scripts.engine.handlers.messages_handle import get_action_messages
 from scripts.game_states import GameStates
-from scripts.input_handlers import handle_keys
+from scripts.input_handlers import get_pressed_key
 import operator
 
 
@@ -44,6 +46,9 @@ def main():
     global_variables.player = Player()
     global_variables.player.ship = ships[0]
     global_variables.player.ship.set_tile(global_variables.game_map.tiles[0][0])
+    # test copy (works!)
+    ship2 = copy.deepcopy(global_variables.player.ship)
+    ship2.set_tile(global_variables.game_map.tiles[10][10])
     # MapManager.map.make_map()
 
     additional_render_params = {}
@@ -63,59 +68,13 @@ def main():
         render_all(CurrentActiveState.ACTIVE_STATE, action_panel_messages)
         libtcod.console_flush()
 
-        # action_panel_messages = get_action_messages()
-        key_action = handle_keys(key, CurrentActiveState.ACTIVE_STATE)
-        selector_move = key_action.get('selector_move')
-        offset_move = key_action.get('offset_move')
-        # selector_move = key_action.get('key_1')
-        toggle_pause = key_action.get('toggle_pause')
-        action = key_action.get('action')
-
-        if toggle_pause:
-            if wm_next_hour_executor.is_running:
-                wm_next_hour_executor.stop()
-            else:
-                wm_next_hour_executor.start()
-
+        key_action = get_pressed_key(key, CurrentActiveState.ACTIVE_STATE)
         if mouse.lbutton_pressed:
             handle_mouse(mouse)
-
-        current_map = get_current_map()
-
-        if offset_move:
-            current_map.map_offset = tuple(map(operator.add, current_map.map_offset, offset_move))
-            if current_map.map_offset[0] < 0:
-                current_map.map_offset = (0, current_map.map_offset[1])
-            if current_map.map_offset[1] < 0:
-                current_map.map_offset = (current_map.map_offset[0], 0)
-            if current_map.map_offset[0] > current_map.width - MAIN_PANEL_WIDTH:
-                current_map.map_offset = (max(current_map.width - MAIN_PANEL_WIDTH, 0), current_map.map_offset[1])
-            if current_map.map_offset[1] > current_map.height - MAIN_PANEL_HEIGHT:
-                current_map.map_offset = (current_map.map_offset[0], max(current_map.height - MAIN_PANEL_HEIGHT, 0))
-
-
-        if selector_move:
-            current_map.selected_tile = tuple(map(operator.add, current_map.selected_tile, selector_move))
-            if current_map.selected_tile[0] < 0:
-                current_map.selected_tile = (0, current_map.selected_tile[1])
-            if current_map.selected_tile[1] < 0:
-                current_map.selected_tile = (current_map.selected_tile[0], 0)
-            if current_map.selected_tile[0] >= current_map.width:
-                current_map.selected_tile = (current_map.width - 1, current_map.selected_tile[1])
-            if current_map.selected_tile[1] >= current_map.height:
-                current_map.selected_tile = (current_map.selected_tile[0], current_map.height-1)
-
-        if key_action.get('key_0'):
-            global_variables.selected_ship_layer = 0
-        if key_action.get('key_1'):
-            global_variables.selected_ship_layer = 1
+        if key_action:
+            handle_keys(key_action, wm_next_hour_executor)
 
         clear_all(global_variables.CONSOLE, CurrentActiveState.ACTIVE_STATE)
-        # if int(datetime.now().strftime('%S')) % 2 == 0:
-        # world_map_next_hour()
-
-        # if debug:
-        #     handle_debug(current_map.tiles[current_map.selected_tile[0]][current_map.selected_tile[1]], action_panel_messages, key_action)
 
 
 if __name__ == '__main__':
