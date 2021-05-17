@@ -67,16 +67,22 @@ def render_all(game_state, action_panel_messages, messages_panel=m_panel,
         # Draw selected ship layer
         ship = global_variables.player.ship
         layer_to_render = ship.model.get(global_variables.selected_ship_layer)
-        for y in range(min(len(layer_to_render.tiles), MAIN_PANEL_HEIGHT)):
-            for x in range(min(len(layer_to_render.tiles[y]), MAIN_PANEL_WIDTH)):
-                tile = layer_to_render.tiles[y][x]
-                if tile.type and tile.material:
-                    libtcod.console_set_char_background(con, x, y, colors.get(tile.material.get('color')), libtcod.BKGND_SET)
-                    libtcod.console_set_default_foreground(con, opposite_colors.get(tile.material.get('color')))
-                    libtcod.console_put_char(con, x, y, tile.type.get('character'), libtcod.BKGND_DEFAULT)
-                else:
-                    libtcod.console_set_char_background(con, x, y, libtcod.azure, libtcod.BKGND_SET)
+        for y in range(MAIN_PANEL_HEIGHT):
+            for x in range(MAIN_PANEL_WIDTH):
+                if ((0 <= x < (MAIN_PANEL_WIDTH - len(layer_to_render.tiles[0]))/2 or (MAIN_PANEL_WIDTH + len(layer_to_render.tiles[0]))/2  <= x < MAIN_PANEL_WIDTH) or
+                        (0 <= y < (MAIN_PANEL_HEIGHT - len(layer_to_render.tiles))/2 or (MAIN_PANEL_HEIGHT + len(layer_to_render.tiles))/2  <= y < MAIN_PANEL_HEIGHT)):
+                    libtcod.console_set_char_background(con, x, y, libtcod.Color(15, 15, 15), libtcod.BKGND_SET)
+                    # libtcod.console_set_default_foreground(con, opposite_colors.get(tile.material.get('color')))
                     libtcod.console_put_char(con, x, y, ' ', libtcod.BKGND_DEFAULT)
+                else:
+                    tile = layer_to_render.tiles[int(y - (MAIN_PANEL_HEIGHT - len(layer_to_render.tiles))/2)][int(x - (MAIN_PANEL_WIDTH - len(layer_to_render.tiles[0]))/2)]
+                    if tile.type and tile.material:
+                        libtcod.console_set_char_background(con, x, y, colors.get(tile.material.get('color')), libtcod.BKGND_SET)
+                        libtcod.console_set_default_foreground(con, opposite_colors.get(tile.material.get('color')))
+                        libtcod.console_put_char(con, x, y, tile.type.get('character'), libtcod.BKGND_DEFAULT)
+                    else:
+                        libtcod.console_set_char_background(con, x, y, libtcod.azure, libtcod.BKGND_SET)
+                        libtcod.console_put_char(con, x, y, ' ', libtcod.BKGND_DEFAULT)
 
     libtcod.console_blit(con, 0, 0, screen_width, screen_height, 0, 0, 0)
 
