@@ -8,6 +8,7 @@ selected_ship_layer = 0
 selected_object = None
 tile_info_options = {}
 object_options = {}
+subject_options = {}
 map_width = 100
 map_height = 60
 game_map = None

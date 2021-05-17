@@ -41,4 +41,5 @@ class Ship(WorldMapObject):
         results = {}
         if global_variables.player.ship == self:
             results["Go to ship map"] = self.go_to_ship_map
+        return results
         # return {"Go to ship map": go_to_ship_map}

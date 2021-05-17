@@ -90,19 +90,20 @@ def render_all(game_state, action_panel_messages, messages_panel=m_panel,
 
     action_panel.clear()
 
-    y = 1
-    for message in action_panel_messages:
-        console_set_default_background(action_panel, libtcod.gray)
-        libtcod.console_set_default_foreground(action_panel, libtcod.white)
-        libtcod.console_print_ex(action_panel, 0, y, libtcod.BKGND_NONE, libtcod.LEFT, message)
-        y += 1
+    draw_subject_functions(action_panel)
+    # y = 1
+    # for message in action_panel_messages:
+    #     console_set_default_background(action_panel, libtcod.gray)
+    #     libtcod.console_set_default_foreground(action_panel, libtcod.white)
+    #     libtcod.console_print_ex(action_panel, 0, y, libtcod.BKGND_NONE, libtcod.LEFT, message)
+    #     y += 1
 
     libtcod.console_blit(action_panel, 0, 0, action_panel_width, action_panel_height, 0, action_panel_x, action_panel_y)
 
     info_panel.clear()
     console_set_default_background(info_panel, libtcod.azure)
     if game_map.selected_tile:
-        draw_object_info(info_panel)
+        draw_selected_object_functions(info_panel)
 
     libtcod.console_blit(info_panel, 0, 0, SCREEN_WIDTH - PANEL_WIDTH, SCREEN_HEIGHT - MAIN_PANEL_HEIGHT, 0, 0,
                          MAIN_PANEL_HEIGHT)
@@ -118,15 +119,24 @@ def render_all(game_state, action_panel_messages, messages_panel=m_panel,
                              screen_height - 3)
 
 
-def draw_object_info(con):
+def draw_selected_object_functions(con):
     # return
+    global_variables.object_options = {}
     y = 0
-    for option in options_manager.get_available_options().items():
+    for option in options_manager.get_selected_object_functions().items():
         libtcod.console_set_default_foreground(con, libtcod.white)
         libtcod.console_print_ex(con, 0, y, libtcod.BKGND_NONE, libtcod.LEFT, option[0])
         global_variables.object_options[y] = option[1]
         y += 1
 
+def draw_subject_functions(con):
+    y = 0
+    global_variables.subject_options = {}
+    for option in options_manager.get_subject_functions().items():
+        libtcod.console_set_default_foreground(con, libtcod.white)
+        libtcod.console_print_ex(con, 0, y, libtcod.BKGND_NONE, libtcod.LEFT, option[0])
+        global_variables.subject_options[y] = option[1]
+        y += 1
 
 def draw_tile_info(con, tile):
     return

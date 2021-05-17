@@ -47,8 +47,8 @@ def main():
     global_variables.player.ship = ships[0]
     global_variables.player.ship.set_tile(global_variables.game_map.tiles[0][0])
     # test copy (works!)
-    ship2 = copy.deepcopy(global_variables.player.ship)
-    ship2.set_tile(global_variables.game_map.tiles[10][10])
+    # ship2 = copy.deepcopy(ships[0])
+    # ship2.set_tile(global_variables.game_map.tiles[10][10])
     # MapManager.map.make_map()
 
     additional_render_params = {}

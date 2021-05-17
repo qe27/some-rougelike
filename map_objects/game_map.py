@@ -1,7 +1,9 @@
 from map_objects import random_map_generator
 from map_objects.map_types import *
 from map_objects.tile_objects.tile import Tile
-from objects.game_objects.world_map.settlement import Settlement
+from objects.game_objects.world_map.interactable_objects.settlement import Settlement
+from objects.game_objects.world_map.landscape.static_landscape_objects import shallow_water
+from objects.game_objects.world_map.landscape.shallow_water import ShallowWater
 
 
 class Map:
@@ -25,13 +27,18 @@ class Map:
             print(generated_map)
             for x in range(self.width):
                 for y in range(self.height):
+                    # if generated_map.n[x + 1][y + 1] > 0.65:
+                    #     if self.tiles[x - 1]
+                    #     self.tiles[x][y].landscape = Settlement()
                     if generated_map.n[x + 1][y + 1] > 0.3:
+                        self.tiles[x][y].landscape = shallow_water
+                    if generated_map.n[x+1][y+1] > 0.65:
                         self.tiles[x][y].landscape = Settlement()
         if self.map_type == LOCATION_MAP:
             for x in range(self.width):
                 for y in range(self.height):
                     if x % 2 and y % 3:
-                        self.tiles[x][y].landscape = Settlement()
+                        self.tiles[x][y].landscape = shallow_water
             # if self.parent_type=
             # else:
             #     self.tiles[x][y].tile_object.set_landscape({River(): 1})
@@ -44,13 +51,9 @@ class Map:
             tile.lower_map = Map(100, 100, map_type=get_next_map_type(self.map_type))
         return tile.lower_map
 
-    #     self.tiles[10][20].objects.append(MapObject('Test', 'Test Description', tcod.cyan, '@'))
-    # for x in range(self.width):
-    #     for y in range(self.height):
-    #         if (5 < x < 25) and (5 < y < 25):
-    #             1 + 1
-    #             self.tiles[10][20].objects.append(MapObject('Test', 'Test Description', tcod.COLOR_CYAN, '@'))
-
-    # for test purposes
-    # self.prepare_test_requisites()
-    # self.tiles[17][17].objects.append(InteractableObject(libtcod.green, "Cabinet", "C", tile=self.tiles[17][17]))
+    def get_settlement_nearby(self, x, y):
+        for i in [x-1, x, x+1]:
+            for j in [y-1, y, y+1]:
+                for obj in self.tiles[i][j].objects:
+                    if obj.type == Settlement.type:
+                        return obj

@@ -3,6 +3,7 @@ from datetime import datetime
 import global_variables
 from map_objects.map_types import *
 from objects.game_objects.world_map.landscape.open_sea import OpenSea
+from objects.game_objects.world_map.landscape.static_landscape_objects import open_sea
 
 
 class Tile:
@@ -24,9 +25,9 @@ class Tile:
             self.landscape = landscape
         else:
             if self.upper_map.map_type == WORLD_MAP:
-                self.landscape = OpenSea()
+                self.landscape = open_sea
             elif self.upper_map.map_type == LOCATION_MAP:
-                self.landscape = OpenSea()
+                self.landscape = open_sea
         self.landscape.tile = self
         self.objects = []
 

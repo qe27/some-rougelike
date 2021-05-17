@@ -11,12 +11,17 @@ def handle_mouse(mouse):
     elif SCREEN_WIDTH - 10 <= mouse.cx <= SCREEN_WIDTH and \
             SCREEN_HEIGHT - 3 <= mouse.cy <= SCREEN_HEIGHT:
         print('pressed end turn button!!!')
+    # select subject functions
+    elif SCREEN_WIDTH - PANEL_WIDTH <= mouse.cx <= SCREEN_WIDTH and 0 <= mouse.cy < A_PANEL_HEIGHT:
+        if global_variables.subject_options[mouse.cy]:
+            global_variables.subject_options[mouse.cy]()
     elif SCREEN_WIDTH - PANEL_WIDTH <= mouse.cx <= SCREEN_WIDTH and \
             A_PANEL_HEIGHT <= mouse.cy <= A_PANEL_HEIGHT + M_PANEL_HEIGHT:
         selected_option = mouse.cy - A_PANEL_HEIGHT
         if global_variables.tile_info_options[selected_option]:
             print('selected option: ' + global_variables.tile_info_options[selected_option].name)
             global_variables.selected_object = global_variables.tile_info_options[selected_option]
+    # select selected object functions
     elif MAIN_PANEL_HEIGHT <= mouse.cy <= SCREEN_HEIGHT:
         if global_variables.object_options.get(mouse.cy - MAIN_PANEL_HEIGHT):
             global_variables.object_options[mouse.cy - MAIN_PANEL_HEIGHT]()

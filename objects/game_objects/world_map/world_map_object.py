@@ -21,6 +21,7 @@ class WorldMapObject:
         self.options = options
         self.char = char
         self.tile = None
+        self.type = None
 
     def get_object_funcs(self):
         return {'Go to': self.go_to, 'Get Description': self.get_description}
