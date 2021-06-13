@@ -6,11 +6,20 @@ from objects.game_objects.world_map.world_map_object import WorldMapObject
 
 class Ship(WorldMapObject):
 
-    def __init__(self, hp, defence, model, max_speed):
+    def __init__(self, name, description, hp, uw_armor, aw_armor, vol_capacity, weight_capacity, crew_capacity, rooms_capacity, mods_capacity, mobility, max_speed, model):
         super(WorldMapObject, self).__init__()
+        self.description = description
+        self.name = name
+        self.crew_capacity = crew_capacity
+        self.weight_capacity = weight_capacity
+        self.vol_capacity = vol_capacity
+        self.rooms_capacity = rooms_capacity
+        self.mods_capacity = mods_capacity
+        self.mobility = mobility
+        self.aw_armor = aw_armor
+        self.uw_armor = uw_armor
         self.max_hp = hp
         self.current_hp = hp
-        self.defence = defence
         self.model = model
         self.max_speed = max_speed
         self.current_speed = max_speed

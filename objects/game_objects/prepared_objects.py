@@ -27,12 +27,14 @@ def load_ships():
         with open('data/prepared_objects/ships/' + file) as ship_file:
             lines = ship_file.readlines()
             current_layer = []
-            for line in lines[2:]:
+            for line in lines[12:]:
                 ship_line = []
                 if bool(line.isspace()) or line == 'end':
                     layer = ShipLayer(current_layer)
                     current_model[i] = layer
-                    result.append(Ship(100, 100, current_model, 0.3))
+                    result.append(Ship(name=lines[0], description=lines[1], hp=int(lines[2]), uw_armor=int(lines[3]), aw_armor=int(lines[4]),
+                                  vol_capacity=int(lines[5]), weight_capacity=int(lines[6]), crew_capacity=int(lines[7]), rooms_capacity=int(lines[8]),
+                                       mods_capacity=int(lines[9]), mobility=int(lines[10]), max_speed=float(lines[11]), model=current_model))
                     current_layer = []
                     i = + 1
                     continue
